@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "graphiti-aura": {
+      "type": "stdio",
+      "command": "/home/donbr/graphiti-fastmcp/scripts/run_mcp_server.sh",
+      "args": []
+    },
+    "neo4j-aura-management": {
+      "type": "http",
+      "url": "http://localhost:8004/mcp/"
+    },
+    "neo4j-aura-cypher": {
+      "type": "http",
+      "url": "http://localhost:8003/mcp/"
+    },
+    "graphiti-docker": {
+      "type": "http",
+      "url": "http://localhost:8002/mcp/"
+    },
+    "neo4j-docker-cypher": {
+      "type": "http",
+      "url": "http://localhost:8005/mcp/"
+    }
+  }
+}
