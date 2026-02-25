@@ -45,23 +45,25 @@ Migration of predecessor repos (`lifesciences-research`, `lifesciences-deepagent
 
 ## Wave 2: Platform
 
-**Status:** Not Started
+**Status:** ✅ Complete (2026-02-25)
 **Target Repos:** `biosciences-mcp`, `biosciences-memory`
 **Source:** `lifesciences-research` src/ + tests/
 **Depends On:** Wave 1 (ADRs must be in place for schema references)
+**Commit:** `e2c2737` — biosciences-mcp
+**Linear:** AGE-150 (parent), AGE-159 through AGE-167 (sub-issues) — all Done
 
 ### What Moves
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
-| 12 MCP Server implementations | `src/lifesciences_mcp/servers/` | biosciences-mcp | `src/biosciences_mcp/servers/` | ⬜ Not Started |
-| 13 Client libraries | `src/lifesciences_mcp/clients/` | biosciences-mcp | `src/biosciences_mcp/clients/` | ⬜ Not Started |
-| Pydantic models (envelopes, entities) | `src/lifesciences_mcp/models/` | biosciences-mcp | `src/biosciences_mcp/models/` | ⬜ Not Started |
-| Gateway server | `src/lifesciences_mcp/servers/gateway.py` | biosciences-mcp | `src/biosciences_mcp/servers/gateway.py` | ⬜ Not Started |
-| Unit tests (~399) | `tests/unit/` | biosciences-mcp | `tests/unit/` | ⬜ Not Started |
-| Integration tests (~294) | `tests/integration/` | biosciences-mcp | `tests/integration/` | ⬜ Not Started |
-| E2E tests (~4) | `tests/e2e/` | biosciences-mcp | `tests/e2e/` | ⬜ Not Started |
-| pyproject.toml | `pyproject.toml` | biosciences-mcp | `pyproject.toml` | ⬜ Not Started |
+| 12 MCP Server implementations | `src/lifesciences_mcp/servers/` | biosciences-mcp | `src/biosciences_mcp/servers/` | ✅ Complete |
+| 13 Client libraries | `src/lifesciences_mcp/clients/` | biosciences-mcp | `src/biosciences_mcp/clients/` | ✅ Complete |
+| Pydantic models (envelopes, entities) | `src/lifesciences_mcp/models/` | biosciences-mcp | `src/biosciences_mcp/models/` | ✅ Complete |
+| Gateway server | `src/lifesciences_mcp/servers/gateway.py` | biosciences-mcp | `src/biosciences_mcp/servers/gateway.py` | ✅ Complete |
+| Unit tests (~399) | `tests/unit/` | biosciences-mcp | `tests/unit/` | ✅ Complete |
+| Integration tests (~294) | `tests/integration/` | biosciences-mcp | `tests/integration/` | ✅ Complete |
+| E2E tests (~4) | `tests/e2e/` | biosciences-mcp | `tests/e2e/` | ✅ Complete |
+| pyproject.toml | `pyproject.toml` | biosciences-mcp | `pyproject.toml` | ✅ Complete |
 | Graphiti MCP config | `biosciences-memory/.mcp.json` | biosciences-memory | `.mcp.json` | ✅ Already in place |
 | Environment config | `biosciences-memory/.env.example` | biosciences-memory | `.env.example` | ✅ Already in place |
 
@@ -69,13 +71,23 @@ Migration of predecessor repos (`lifesciences-research`, `lifesciences-deepagent
 - `lifesciences_mcp` → `biosciences_mcp` (all imports, pyproject.toml, test references)
 - `lifesciences-research` → `biosciences-mcp` (package name in pyproject.toml)
 
+### Ruff Fixes Applied During Migration
+Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161):
+- **B904** `clients/chembl.py:134` — Added `from None` to `raise TimeoutError(...)` in except block
+- **F841** `clients/hgnc.py:156` — Removed unused `alias_hgnc_ids` variable
+- **UP042** `models/envelopes.py:8,16` — `ErrorCode(str, Enum)` → `ErrorCode(StrEnum)`
+- **E402** `models/gene.py:15` — Moved cross_references import above module-level constant
+
+### Pyright Notes
+45 pre-existing type errors carried from source repo (not introduced by migration). Documented and accepted. See AGE-150 comment for details.
+
 ### Acceptance Criteria
-- [ ] All 12 servers importable from `biosciences_mcp.servers`
-- [ ] `uv run pytest -m unit` passes (399+ tests)
-- [ ] `uv run pytest -m integration` passes (294+ tests)
-- [ ] Gateway mounts all 12 servers
-- [ ] Package rename complete (`lifesciences_mcp` → `biosciences_mcp`)
-- [ ] Memory repo MCP connections verified
+- [x] All 12 servers importable from `biosciences_mcp.servers`
+- [x] `uv run pytest -m unit` passes (399+ tests)
+- [x] `uv run pytest -m integration` passes (294+ tests)
+- [x] Gateway mounts all 12 servers
+- [x] Package rename complete (`lifesciences_mcp` → `biosciences_mcp`)
+- [x] Memory repo MCP connections verified
 
 ---
 
