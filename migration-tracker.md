@@ -9,6 +9,7 @@ Migration of predecessor repos (`lifesciences-research`, `lifesciences-deepagent
 | lifesciences-research | `/home/donbr/graphiti-org/lifesciences-research` | 12 MCP servers, 697 tests, 6 ADRs, 6 skills, 15 SpecKit commands, gateway, models |
 | lifesciences-deepagents | `/home/donbr/ai2026/lifesciences-deepagents-worktrees/deepagents-0312-upgrade-spike` | LangGraph supervisor, 7 specialists, React UI, MCP wrappers |
 | lifesciences-temporal | `/home/donbr/graphiti-org/lifesciences-temporal` | PydanticAI agents, Temporal workflows, CQ14 pipeline |
+| graphiti-fastmcp | `/home/donbr/graphiti-fastmcp` | Graphiti FastMCP server (memory persistence), 9 MCP tools, async queue, Neo4j pooling |
 
 ---
 
@@ -33,6 +34,11 @@ Migration of predecessor repos (`lifesciences-research`, `lifesciences-deepagent
 | 15 SpecKit Commands | `.claude/commands/speckit.*` | biosciences-skills | `.claude/commands/` | ✅ Complete |
 | Scaffold Skills | `.claude/commands/scaffold-*` | biosciences-skills | `.claude/commands/` | ✅ Complete |
 | Graphiti Skills | `.claude/commands/graphiti-*` | biosciences-skills | `.claude/commands/` | ✅ Complete |
+| specs/ (13 MCP server specs) | `lifesciences-research/specs/` | biosciences-architecture | `specs/` | ✅ Complete |
+| .specify/ (SpecKit config) | `lifesciences-research/.specify/` | biosciences-architecture | `.specify/` | ✅ Complete |
+| speckit-standard-prompt-v2.md | `lifesciences-research/docs/` | biosciences-architecture | `docs/` | ✅ Complete |
+| speckit-standard-prompt.md (v1 legacy) | `lifesciences-research/docs/` | biosciences-architecture | `docs/` | ✅ Complete |
+| speckit-scaffold-process-timeline-v2.md | `lifesciences-research/docs/` | biosciences-architecture | `docs/` | ✅ Complete |
 
 ### Acceptance Criteria
 - [x] All 6 ADRs present in `biosciences-architecture/docs/adr/accepted/`
@@ -128,27 +134,53 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 ## Wave 4: Validation
 
+> **Note:** SpecKit process documents (specs/, .specify/, speckit-*.md) were originally scoped to biosciences-research (Wave 4). They have been reassigned to biosciences-architecture (Wave 1-ext) because they are architectural governance artifacts owned by the Platform Architect, not research outputs.
+
 **Status:** Not Started
-**Target Repos:** `biosciences-evaluation`, `biosciences-research`
-**Source:** `lifesciences-research` docs/
-**Depends On:** Wave 2 + Wave 3 (functional platform needed for validation)
+**Target Repos:** `biosciences-evaluation`, `biosciences-research`, `biosciences-memory`
+**Source:** `lifesciences-research` docs/ + `graphiti-fastmcp`
+**Depends On:** Wave 2 + Wave 3 (graphiti-fastmcp usage patterns confirmed through orchestration layer)
 
 ### What Moves
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
 | Competency questions catalog | `docs/competency-questions/` | biosciences-research | `docs/competency-questions/` | ⬜ Not Started |
-| SpecKit standard prompt | `docs/speckit-standard-prompt.md` | biosciences-research | `docs/` | ⬜ Not Started |
 | Research outputs | `docs/research/` | biosciences-research | `docs/research/` | ⬜ Not Started |
 | Evaluation rubrics | (new) | biosciences-evaluation | `rubrics/` | ⬜ Not Started |
 | Quality metrics definitions | (new) | biosciences-evaluation | `metrics/` | ⬜ Not Started |
 | Reference materials | `reference/` | biosciences-research | `reference/` | ⬜ Not Started |
+
+### graphiti-fastmcp Migration
+
+| Item | Source | Target Repo | Target Path | Status |
+|------|--------|-------------|-------------|--------|
+| FastMCP server factory (`server.py`) | `graphiti-fastmcp/src/server.py` | biosciences-memory | `src/biosciences_memory/server.py` | ⬜ Not Started |
+| Queue service (`queue_service.py`) | `graphiti-fastmcp/src/services/` | biosciences-memory | `src/biosciences_memory/services/` | ⬜ Not Started |
+| Config schema (`schema.py`) | `graphiti-fastmcp/src/config/` | biosciences-memory | `src/biosciences_memory/config/` | ⬜ Not Started |
+| Provider factories (`factories.py`) | `graphiti-fastmcp/src/services/` | biosciences-memory | `src/biosciences_memory/services/` | ⬜ Not Started |
+| Response models | `graphiti-fastmcp/src/models/` | biosciences-memory | `src/biosciences_memory/models/` | ⬜ Not Started |
+| Test suite (unit + integration) | `graphiti-fastmcp/tests/` | biosciences-memory | `tests/` | ⬜ Not Started |
+| pyproject.toml | (new) | biosciences-memory | `pyproject.toml` | ⬜ Not Started |
+
+**Curation steps:**
+- Align to hatchling build backend
+- Apply project ruff config
+- Apply pytest markers (`unit`/`integration`/`e2e`)
+- Pin graphiti-core version consistent with rest of platform
+- Rename `graphiti_fastmcp` → `biosciences_memory` package internals
+- Add biosciences-specific entity schemas (Gene, Protein, Drug, Disease, Pathway)
 
 ### Acceptance Criteria
 - [ ] Competency questions catalog migrated and indexed
 - [ ] Evaluation rubrics defined for each research workflow
 - [ ] Quality metrics baseline established
 - [ ] End-to-end validation: CQ14 runs through new org structure
+- [ ] `graphiti-fastmcp` source migrated and curated into `biosciences-memory/src/`
+- [ ] `biosciences-memory` has `pyproject.toml` with hatchling + ruff + pytest markers
+- [ ] `uv run pytest -m unit` passes in `biosciences-memory`
+- [ ] Memory layer validates end-to-end: deepagents PERSIST phase writes to Docker Neo4j
+- [ ] CQ14 Temporal workflow persists research output to knowledge graph
 
 ---
 
@@ -167,4 +199,4 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 | Wave 1 (Foundation) | None | Low — mostly file copying + path updates |
 | Wave 2 (Platform) | Wave 1 | High — package rename, 697 test fixes |
 | Wave 3 (Orchestration) | Wave 2 | Medium — endpoint updates, agent rewiring |
-| Wave 4 (Validation) | Wave 2, 3 | Medium — new evaluation content + validation runs |
+| Wave 4 (Validation) | Wave 2, 3 (graphiti-fastmcp patterns confirmed) | Medium — evaluation content + graphiti-fastmcp curation + validation runs |
