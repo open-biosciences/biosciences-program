@@ -1,5 +1,9 @@
 {
   "mcpServers": {
+    "biosciences-mcp": {
+      "type": "http",
+      "url": "https://biosciences-mcp.fastmcp.app/mcp"
+    },
     "graphiti-aura": {
       "type": "stdio",
       "command": "/home/donbr/graphiti-fastmcp/scripts/run_mcp_server.sh",
