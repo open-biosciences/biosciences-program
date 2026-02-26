@@ -1,5 +1,10 @@
 # CLAUDE.md — biosciences-program
 
+## Session Priming (REQUIRED)
+
+Session priming is required before any work in this repo. See the workspace-level
+[`../CLAUDE.md`](../CLAUDE.md) §Session Priming for the mandatory Graphiti queries.
+
 ## Purpose
 
 Program management and cross-repo coordination for the Open Biosciences platform. This repo is owned by the **Program Director** agent.
