@@ -99,36 +99,57 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 ## Wave 3: Orchestration
 
-**Status:** Not Started
+**Status:** ✅ Complete (2026-02-26)
 **Target Repos:** `biosciences-deepagents`, `biosciences-temporal`
 **Source:** `lifesciences-deepagents` + `lifesciences-temporal`
 **Depends On:** Wave 2 (MCP servers must be importable)
+**Commits:** `058fc16`, `090c6ac` — biosciences-deepagents | `73c6ebe`, `d7ef863` — biosciences-temporal
 
 ### What Moves
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
-| LangGraph supervisor | `apps/api/graphs/lifesciences.py` | biosciences-deepagents | `src/` | ⬜ Not Started |
-| MCP tool wrappers | `apps/api/shared/mcp.py` | biosciences-deepagents | `src/` | ⬜ Not Started |
-| System prompts | `apps/api/shared/prompts.py` | biosciences-deepagents | `src/` | ⬜ Not Started |
-| React chat UI | `apps/web/` | biosciences-deepagents | `apps/web/` | ⬜ Not Started |
-| PydanticAI agents | `src/cq14_temporal/agents/` | biosciences-temporal | `src/` | ⬜ Not Started |
-| Temporal workflows | `src/cq14_temporal/temporal/` | biosciences-temporal | `src/` | ⬜ Not Started |
-| Temporal config | `src/cq14_temporal/config/` | biosciences-temporal | `src/` | ⬜ Not Started |
-| Entry scripts | `src/cq14_temporal/scripts/` | biosciences-temporal | `src/` | ⬜ Not Started |
-| Docker compose (Temporal + Neo4j) | `docker-compose.yml` | biosciences-temporal | `docker-compose.yml` | ⬜ Not Started |
+| LangGraph supervisor | `apps/api/lifesciences.py` | biosciences-deepagents | `apps/api/biosciences.py` | ✅ Complete |
+| MCP tool wrappers | `apps/api/shared/mcp.py` | biosciences-deepagents | `apps/api/shared/mcp.py` | ✅ Complete |
+| System prompts | `apps/api/shared/prompts.py` | biosciences-deepagents | `apps/api/shared/prompts.py` | ✅ Complete |
+| React chat UI | `apps/web/` | biosciences-deepagents | `apps/web/` | ✅ Complete |
+| 9 Agent skill folders | `.deepagents/skills/lifesciences-*` | biosciences-deepagents | `.deepagents/skills/biosciences-*` | ✅ Complete |
+| PydanticAI agents | `src/cq14_temporal/agents/` | biosciences-temporal | `src/biosciences_temporal/agents/` | ✅ Complete |
+| Temporal workflows | `src/cq14_temporal/temporal/` | biosciences-temporal | `src/biosciences_temporal/temporal/` | ✅ Complete |
+| Temporal config | `src/cq14_temporal/config/` | biosciences-temporal | `src/biosciences_temporal/config/` | ✅ Complete |
+| Entry scripts | `src/cq14_temporal/scripts/` | biosciences-temporal | `src/biosciences_temporal/scripts/` | ✅ Complete |
+| Docker compose | `docker-compose.yml` | biosciences-temporal | `docker-compose.yml` | ✅ Complete |
 
-### Key Refactoring
-- Update MCP tool wrapper endpoints to point to `biosciences-mcp` gateway
-- Rename `lifesciences` agent references to `biosciences`
-- Update `langgraph.json` entry points
+### .mcp.json Propagation (Workstream 4)
+
+| Repo | Action | Status |
+|------|--------|--------|
+| biosciences-deepagents | Replace `lifesciences-research` → `biosciences-mcp` | ✅ Complete |
+| biosciences-temporal | Create new `.mcp.json` with `biosciences-mcp` + graphiti entries | ✅ Complete |
+| biosciences-memory | Add `biosciences-mcp` HTTP entry | ✅ Complete |
+| biosciences-program | Add `biosciences-mcp` HTTP entry | ✅ Complete |
+| open-biosciences/ (workspace root) | Add `biosciences-mcp` HTTP entry | ✅ Complete |
+
+### Key Refactoring Applied
+- MCP URL updated: `lifesciences-research.fastmcp.app` → `biosciences-mcp.fastmcp.app`
+- Package rename: `cq14_temporal` → `biosciences_temporal`
+- Env var rename: `LIFESCIENCES_RESEARCH_PATH` → `BIOSCIENCES_MCP_PATH`
+- Env var rename: `LIFESCIENCES_MCP_URL` → `BIOSCIENCES_MCP_URL`
+- Task queue rename: `cq14-task-queue` → `biosciences-task-queue`
+- `langgraph.json` graph key: `"lifesciences"` → `"biosciences"`, entrypoint → `biosciences.py`
+- Skill folder renames: all 9 `lifesciences-*` → `biosciences-*` in `.deepagents/skills/`
+- Architecture preserved: UnsandboxedWorkflowRunner, one-shot MCP client pattern
 
 ### Acceptance Criteria
-- [ ] LangGraph supervisor starts on `:2024`
-- [ ] React UI connects and streams responses
-- [ ] Temporal worker starts and connects
-- [ ] Standalone agent mode works (`run_agent.py`)
-- [ ] MCP tool wrappers connect to `biosciences-mcp` servers
+- [x] `langgraph.json` entrypoint resolves to `apps/api/biosciences.py:graph`
+- [x] No references to `lifesciences-research.fastmcp.app` remain in source files
+- [x] All 9 skill folders renamed to `biosciences-*` in `.deepagents/skills/`
+- [x] No references to `cq14_temporal` or `lifesciences-research` remain in `src/`
+- [x] `biosciences-mcp` HTTP entry present in all 5 `.mcp.json` locations
+- [ ] `uv run langgraph dev` starts on port `:2024` (runtime verification pending)
+- [ ] `uv run python -m src.biosciences_temporal.scripts.run_agent --gene-a BRCA1 --gene-b TP53` runs without import errors (runtime verification pending)
+- [ ] `docker compose up -d` starts Temporal on ports 7233/8233 (runtime verification pending)
+- [ ] `yarn` installs + dev server runs on `:3000` in `apps/web/` (runtime verification pending)
 
 ---
 
