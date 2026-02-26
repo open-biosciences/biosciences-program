@@ -40,19 +40,54 @@ Eleven repositories under the [open-biosciences](https://github.com/open-bioscie
 
 | Repository | Role | Wave |
 |------------|------|------|
-| [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) | ADRs, schemas, governance — root dependency | ✅ Wave 1 |
-| [biosciences-skills](https://github.com/open-biosciences/biosciences-skills) | 6 domain skills, 15 SpecKit commands | ✅ Wave 1 |
+| [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) | ADRs, schemas, SpecKit governance — root dependency | ✅ Wave 1 |
+| [biosciences-skills](https://github.com/open-biosciences/biosciences-skills) | 7 domain skills, Graphiti + scaffold commands | ✅ Wave 1 |
 | [biosciences-program](https://github.com/open-biosciences/biosciences-program) | Migration tracking, agent team definitions | ✅ Wave 1 |
 | [biosciences-mcp](https://github.com/open-biosciences/biosciences-mcp) | 12 FastMCP servers, 697+ tests, unified gateway | ✅ Wave 2 |
 | [biosciences-memory](https://github.com/open-biosciences/biosciences-memory) | Graphiti + Neo4j knowledge graph layer | ✅ Wave 2 |
-| [biosciences-deepagents](https://github.com/open-biosciences/biosciences-deepagents) | LangGraph supervisor + 7 specialists, React UI | ⬜ Wave 3 |
-| [biosciences-temporal](https://github.com/open-biosciences/biosciences-temporal) | PydanticAI agents, Temporal.io workflows | ⬜ Wave 3 |
+| [biosciences-deepagents](https://github.com/open-biosciences/biosciences-deepagents) | LangGraph supervisor + 7 specialists, React UI | ✅ Wave 3 |
+| [biosciences-temporal](https://github.com/open-biosciences/biosciences-temporal) | PydanticAI agents, Temporal.io durable workflows | ✅ Wave 3 |
 | [biosciences-evaluation](https://github.com/open-biosciences/biosciences-evaluation) | Evaluation rubrics, quality metrics | ⬜ Wave 4 |
 | [biosciences-research](https://github.com/open-biosciences/biosciences-research) | Competency questions, graph-builder workflows | ⬜ Wave 4 |
 | [biosciences-education](https://github.com/open-biosciences/biosciences-education) | Training materials, tutorials, onboarding | ⬜ Wave 4 |
 | [biosciences-workspace-template](https://github.com/open-biosciences/biosciences-workspace-template) | Bootstrap scripts, workspace config templates | ⬜ Wave 4 |
 
 → Full agent team definitions: [AGENTS.md](AGENTS.md)
+
+---
+
+## Workspace
+
+Eleven active repositories organized into four migration waves, plus four legacy predecessor repos kept as read-only references.
+
+```
+🧬 open-biosciences/
+│
+├── 🏛️ FOUNDATION  (Wave 1 ✅ complete)
+│   📋 program          coordination, migration tracking, agent team
+│   🏗️ architecture     ADRs, schemas, SpecKit governance — root provider
+│   ⚡ skills           7 domain skills, Graphiti + scaffold commands
+│
+├── 🔌 PLATFORM  (Wave 2 ✅ complete)
+│   🔌 mcp              12 FastMCP servers · 697+ tests · unified gateway
+│   🧠 memory           Graphiti + Neo4j knowledge graph layer
+│
+├── 🤖 ORCHESTRATION  (Wave 3 ✅ complete)
+│   🤖 deepagents       LangGraph supervisor · 7 specialists · React UI
+│   ⏱️ temporal         PydanticAI agents · Temporal.io durable workflows
+│
+├── 🔬 VALIDATION & EDUCATION  (Wave 4 ⬜ not started)
+│   🔬 research         competency questions · graph-builder workflows
+│   📊 evaluation       quality metrics · evaluation rubrics
+│   📚 education        tutorials · onboarding guides
+│   🧰 workspace-template  bootstrap scripts · workspace config
+│
+└── 📦 LEGACY PREDECESSORS  (read-only migration sources)
+    📦 lifesciences-research    → architecture · mcp · skills
+    📦 lifesciences-deepagents  → deepagents
+    📦 lifesciences-temporal    → temporal
+    📦 graphiti-fastmcp         → memory (Wave 4)
+```
 
 ---
 

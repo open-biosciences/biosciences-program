@@ -14,7 +14,7 @@
 | 1 — Foundation | biosciences-architecture, biosciences-skills, biosciences-program | ✅ Complete | 2026-02-25 |
 | 1-ext | biosciences-architecture (SpecKit artifacts) | ✅ Complete | 2026-02-26 (AGE-183) |
 | 2 — Platform | biosciences-mcp, biosciences-memory | ✅ Complete | 2026-02-25 |
-| 3 — Orchestration | biosciences-deepagents, biosciences-temporal | ⬜ Not Started | — |
+| 3 — Orchestration | biosciences-deepagents, biosciences-temporal | ✅ Complete | 2026-02-26 |
 | 4 — Validation | biosciences-evaluation, biosciences-research, biosciences-education, biosciences-workspace-template | ⬜ Not Started | — |
 
 ---
@@ -67,11 +67,11 @@ These decisions were made during migration and must be reflected accurately in a
 - **Wave:** 1 ✅ Complete
 - **Owner:** Quality & Skills Engineer (Agent 8)
 - **Content:**
-  - 6 domain skills: lifesciences-clinical, lifesciences-crispr, lifesciences-genomics, lifesciences-graph-builder, lifesciences-pharmacology, lifesciences-proteomics
-  - 9 SpecKit commands: speckit.constitution, speckit.specify, speckit.clarify, speckit.plan, speckit.tasks, speckit.taskstoissues, speckit.analyze, speckit.checklist, speckit.implement
-  - 4 Graphiti commands: graphiti-health, graphiti-verify, graphiti-aura-stats, graphiti-docker-stats
-  - 2 scaffold commands: scaffold-fastmcp, scaffold-fastmcp-v2
-  - Total: 15 commands
+  - **7 domain skills**: lifesciences-clinical, lifesciences-crispr, lifesciences-genomics, lifesciences-graph-builder, lifesciences-pharmacology, lifesciences-proteomics, security-review
+  - **6 commands** in `.claude/commands/`:
+    - 4 Graphiti commands: graphiti-health, graphiti-verify, graphiti-aura-stats, graphiti-docker-stats
+    - 2 scaffold commands: scaffold-fastmcp, scaffold-fastmcp-v2
+  - **Note:** The 9 SpecKit commands (speckit.*) live in `biosciences-architecture/.claude/commands/` — they are governance artifacts, not skills-layer tools
 - **Upstream:** biosciences-architecture (ADR-002, ADR-003)
 
 ### biosciences-mcp
@@ -106,7 +106,7 @@ These decisions were made during migration and must be reflected accurately in a
 - **Downstream:** biosciences-research (persists research results), biosciences-deepagents (PERSIST phase)
 
 ### biosciences-deepagents
-- **Wave:** 3 ⬜ Not Started
+- **Wave:** 3 ✅ Complete (commit `058fc16`)
 - **Owner:** Deep Agents Engineer (Agent 5)
 - **Will contain (from predecessor `lifesciences-deepagents`):**
   - LangGraph supervisor orchestrating 7 specialist subagents via `create_deep_agent()`
@@ -120,7 +120,7 @@ These decisions were made during migration and must be reflected accurately in a
 - **Upstream:** biosciences-mcp, biosciences-memory
 
 ### biosciences-temporal
-- **Wave:** 3 ⬜ Not Started
+- **Wave:** 3 ✅ Complete (commit `73c6ebe`)
 - **Owner:** Temporal Engineer (Agent 7)
 - **Will contain (from predecessor `lifesciences-temporal`):**
   - PydanticAI standalone agents (testable without Temporal infrastructure)
