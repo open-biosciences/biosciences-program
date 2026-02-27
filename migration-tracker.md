@@ -158,16 +158,18 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 > **Note:** SpecKit process documents (specs/, .specify/, speckit-*.md) were originally scoped to biosciences-research (Wave 4). They have been reassigned to biosciences-architecture (Wave 1-ext) because they are architectural governance artifacts owned by the Platform Architect, not research outputs.
 
-**Status:** Not Started
+**Status:** 🟡 In Progress (2026-02-27)
 **Target Repos:** `biosciences-evaluation`, `biosciences-research`, `biosciences-memory`
 **Source:** `lifesciences-research` docs/ + `graphiti-fastmcp`
 **Depends On:** Wave 2 + Wave 3 (graphiti-fastmcp usage patterns confirmed through orchestration layer)
+**Linear:** AGE-195 (parent)
+**Commit:** `3ce399e` — biosciences-research (competency questions, 72 files)
 
 ### What Moves
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
-| Competency questions catalog | `docs/competency-questions/` | biosciences-research | `docs/competency-questions/` | ⬜ Not Started |
+| Competency questions catalog | `docs/competency-questions/` | biosciences-research | `docs/competency-questions/` | ✅ Complete |
 | Research outputs | `docs/research/` | biosciences-research | `docs/research/` | ⬜ Not Started |
 | Evaluation rubrics | (new) | biosciences-evaluation | `rubrics/` | ⬜ Not Started |
 | Quality metrics definitions | (new) | biosciences-evaluation | `metrics/` | ⬜ Not Started |
@@ -194,7 +196,7 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 - Add biosciences-specific entity schemas (Gene, Protein, Drug, Disease, Pathway)
 
 ### Acceptance Criteria
-- [ ] Competency questions catalog migrated and indexed
+- [x] Competency questions catalog migrated and indexed
 - [ ] Evaluation rubrics defined for each research workflow
 - [ ] Quality metrics baseline established
 - [ ] End-to-end validation: CQ14 runs through new org structure
