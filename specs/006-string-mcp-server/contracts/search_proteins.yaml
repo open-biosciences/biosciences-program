@@ -1,0 +1,135 @@
+# Tool Contract: search_proteins
+
+tool_name: search_proteins
+phase: fuzzy
+protocol: Fuzzy-to-Fact Phase 1
+
+description: |
+  Fuzzy search for proteins by gene symbol, protein name, or identifier.
+  Returns ranked candidates with STRING CURIEs for Phase 2 strict lookup.
+
+inputs:
+  query:
+    type: string
+    required: true
+    min_length: 2
+    description: Search term (gene symbol, protein name, or identifier)
+    examples:
+      - "TP53"
+      - "tumor protein"
+      - "BRCA"
+
+  species:
+    type: integer
+    required: false
+    default: 9606
+    description: NCBI Taxonomy ID (9606=human, 10090=mouse, 10116=rat)
+    examples:
+      - 9606  # Human
+      - 10090 # Mouse
+      - 7227  # Drosophila
+
+  limit:
+    type: integer
+    required: false
+    default: 10
+    min: 1
+    max: 100
+    description: Number of results per page
+
+  cursor:
+    type: string
+    required: false
+    description: Opaque cursor for pagination (from previous response)
+
+output:
+  envelope: PaginationEnvelope
+  content_type: InteractionSearchCandidate
+  schema:
+    items:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            pattern: "^STRING:\\d+\\.(ENSP\\d+|[a-z]\\d+)$"
+            example: "STRING:9606.ENSP00000269305"
+          preferred_name:
+            type: string
+            example: "TP53"
+          annotation:
+            type: string
+            nullable: true
+            example: "Cellular tumor antigen p53"
+          taxon_id:
+            type: integer
+            example: 9606
+          score:
+            type: number
+            minimum: 0.0
+            maximum: 1.0
+            example: 0.95
+    pagination:
+      type: object
+      properties:
+        cursor:
+          type: string
+          nullable: true
+        total_count:
+          type: integer
+        page_size:
+          type: integer
+
+errors:
+  AMBIGUOUS_QUERY:
+    http_status: 400
+    message: "Query too short or matches too many results"
+    recovery_hint: "Provide at least 2 characters or refine your search term"
+    trigger: Query length < 2 OR result count > 100 with query length < 3
+
+  RATE_LIMITED:
+    http_status: 429
+    message: "Exceeded rate limit (1 request/second)"
+    recovery_hint: "Wait 1 second before retrying"
+    trigger: More than 1 request per second
+
+  UPSTREAM_ERROR:
+    http_status: 502/503/504
+    message: "STRING API error"
+    recovery_hint: "Retry after a short delay"
+    trigger: STRING API returns 5xx error
+
+examples:
+  - name: Basic search for TP53
+    input:
+      query: "TP53"
+      species: 9606
+      limit: 10
+    output:
+      items:
+        - id: "STRING:9606.ENSP00000269305"
+          preferred_name: "TP53"
+          annotation: "Cellular tumor antigen p53"
+          taxon_id: 9606
+          score: 0.95
+      pagination:
+        cursor: null
+        total_count: 1
+        page_size: 10
+
+  - name: Ambiguous query error
+    input:
+      query: "p"
+      species: 9606
+    error:
+      code: "AMBIGUOUS_QUERY"
+      message: "Query too short or matches too many results"
+      recovery_hint: "Provide at least 2 characters or refine your search term"
+      invalid_input: "p"
+
+adr_compliance:
+  - ADR-001 §3: Fuzzy-to-Fact Phase 1 (returns ranked candidates)
+  - ADR-001 §8: Canonical PaginationEnvelope
+  - Constitution III: Schema Determinism
+  - Constitution v1.1: Rate limiting (1 req/s)

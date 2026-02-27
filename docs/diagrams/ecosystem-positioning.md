@@ -9,17 +9,17 @@ dual orchestrators, knowledge graph, workspace template).
 
 ```mermaid
 flowchart TD
-    R["Researcher\nAsks a biology question"]
-    M["anthropics/life-sciences\nMarketplace (Storefront)"]
-    S5["5 Curated MCP Servers\nHGNC, UniProt, ChEMBL,\nOpen Targets, STRING"]
-    S4["4 Domain Skills\nFuzzy-to-Fact protocol"]
-    OB["Open Biosciences\nGitHub Organization (Workshop)"]
-    F12["Full 12-Server Platform\n+ Ensembl, Entrez, PubChem,\nIUPHAR, WikiPathways,\nClinicalTrials.gov, BioGRID"]
+    R["Researcher<br/>Asks a biology question"]
+    M["anthropics/life-sciences<br/>Marketplace (Storefront)"]
+    S5["5 Curated MCP Servers<br/>HGNC, UniProt, ChEMBL,<br/>Open Targets, STRING"]
+    S4["4 Domain Skills<br/>Fuzzy-to-Fact protocol"]
+    OB["Open Biosciences<br/>GitHub Organization (Workshop)"]
+    F12["Full 12-Server Platform<br/>+ Ensembl, Entrez, PubChem,<br/>IUPHAR, WikiPathways,<br/>ClinicalTrials.gov, BioGRID"]
     ORCH["Dual Orchestrators"]
-    LG["LangGraph Supervisor\n7 specialists + React UI\n(interactive research)"]
-    TMP["Temporal.io Workflows\nPydanticAI agents\n(durable batch pipelines)"]
-    KG["Knowledge Graph\nGraphiti + Neo4j\nProvenance tracking"]
-    WS["Workspace Template\nBootstrap scripts\nMulti-repo setup"]
+    LG["LangGraph Supervisor<br/>7 specialists + React UI<br/>(interactive research)"]
+    TMP["Temporal.io Workflows<br/>PydanticAI agents<br/>(durable batch pipelines)"]
+    KG["Knowledge Graph<br/>Graphiti + Neo4j<br/>Provenance tracking"]
+    WS["Workspace Template<br/>Bootstrap scripts<br/>Multi-repo setup"]
 
     R -->|discovers| M
     M -->|browse| S5
@@ -50,15 +50,15 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    D["Developer / Contributor\nWants to extend the platform"]
-    GH["GitHub open-biosciences\n12 MIT-licensed repos"]
-    PS["platform-skills\nScaffold commands"]
-    SC["/scaffold-fastmcp\nGenerate compliant\nMCP server skeleton"]
-    ADR["biosciences-architecture\nADRs + Agentic Biolink schema"]
-    SK["biosciences-skills\n6 domain skills library"]
-    NEW["New MCP Server\nFollows Golden Path patterns\nFuzzy-to-Fact compliant"]
-    PR["Pull Request\nSecurity review skill\n697+ test patterns"]
-    MERGE["Merged into Platform\nAvailable to all researchers"]
+    D["Developer / Contributor<br/>Wants to extend the platform"]
+    GH["GitHub open-biosciences<br/>12 MIT-licensed repos"]
+    PS["platform-skills<br/>Scaffold commands"]
+    SC["/scaffold-fastmcp<br/>Generate compliant<br/>MCP server skeleton"]
+    ADR["biosciences-architecture<br/>ADRs + Agentic Biolink schema"]
+    SK["biosciences-skills<br/>6 domain skills library"]
+    NEW["New MCP Server<br/>Follows Golden Path patterns<br/>Fuzzy-to-Fact compliant"]
+    PR["Pull Request<br/>Security review skill<br/>697+ test patterns"]
+    MERGE["Merged into Platform<br/>Available to all researchers"]
 
     D -->|finds| GH
     GH -->|reads| ADR

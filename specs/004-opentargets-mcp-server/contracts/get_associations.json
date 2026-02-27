@@ -1,0 +1,222 @@
+{
+  "tool_name": "get_associations",
+  "description": "Get target-disease associations with evidence scores. Returns paginated list of diseases associated with a target, optionally filtered by disease. Requires valid Ensembl gene ID.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "target_id": {
+        "type": "string",
+        "description": "Ensembl gene ID of the target (e.g., 'ENSG00000141510' for TP53). Must match format ENSG[11 digits].",
+        "pattern": "^ENSG\\d{11}$",
+        "examples": ["ENSG00000141510", "ENSG00000012048"]
+      },
+      "disease_id": {
+        "type": ["string", "null"],
+        "description": "Optional EFO disease ID to filter associations (e.g., 'EFO_0000616' for neoplasm). If provided, returns only the association for that specific disease.",
+        "pattern": "^EFO_\\d+$",
+        "default": null,
+        "examples": ["EFO_0000616", "EFO_0000311"]
+      },
+      "cursor": {
+        "type": ["string", "null"],
+        "description": "Opaque cursor for pagination. Pass from previous response for next page.",
+        "default": null
+      },
+      "page_size": {
+        "type": "integer",
+        "description": "Number of associations per page (1-100, default 50).",
+        "minimum": 1,
+        "maximum": 100,
+        "default": 50
+      }
+    },
+    "required": ["target_id"]
+  },
+  "returns": {
+    "oneOf": [
+      {
+        "type": "object",
+        "description": "PaginationEnvelope with Association items",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target_id": {
+                  "type": "string",
+                  "pattern": "^ENSG\\d{11}$",
+                  "description": "Ensembl gene ID of the target"
+                },
+                "disease_id": {
+                  "type": "string",
+                  "pattern": "^EFO_\\d+$",
+                  "description": "EFO disease ID"
+                },
+                "disease_name": {
+                  "type": "string",
+                  "description": "Human-readable disease name"
+                },
+                "score": {
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0,
+                  "description": "Overall association score (0.0-1.0, higher = stronger evidence)"
+                },
+                "evidence_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Total number of evidence sources supporting this association"
+                },
+                "evidence_sources": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Data type IDs (e.g., 'genetic_association', 'somatic_mutation', 'drugs')"
+                }
+              },
+              "required": ["target_id", "disease_id", "disease_name", "score", "evidence_count"]
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "cursor": {"type": ["string", "null"]},
+              "total_count": {"type": ["integer", "null"]},
+              "page_size": {"type": "integer"}
+            },
+            "required": ["cursor", "page_size"]
+          }
+        },
+        "required": ["items", "pagination"]
+      },
+      {
+        "$ref": "#/components/schemas/ErrorEnvelope"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "code": "UNRESOLVED_ENTITY",
+      "condition": "Target ID or disease ID format invalid",
+      "recovery_hint": "Target ID must match ENSG[11 digits]. Disease ID must match EFO_[digits]. Use search_targets to find valid target IDs."
+    },
+    {
+      "code": "ENTITY_NOT_FOUND",
+      "condition": "Valid target ID format but not found in Open Targets, or no associations exist",
+      "recovery_hint": "Target not found or has no disease associations in Open Targets. Verify the Ensembl ID or use search_targets."
+    },
+    {
+      "code": "RATE_LIMITED",
+      "condition": "Rate limit exceeded (>10 req/s)",
+      "recovery_hint": "Wait {backoff_seconds}s before retrying"
+    },
+    {
+      "code": "UPSTREAM_ERROR",
+      "condition": "Open Targets GraphQL API unavailable or returned unexpected error",
+      "recovery_hint": "Open Targets API temporarily unavailable - retry in 60 seconds"
+    }
+  ],
+  "examples": [
+    {
+      "name": "Get all associations for TP53",
+      "request": {
+        "target_id": "ENSG00000141510",
+        "page_size": 10
+      },
+      "response": {
+        "items": [
+          {
+            "target_id": "ENSG00000141510",
+            "disease_id": "EFO_0000616",
+            "disease_name": "neoplasm",
+            "score": 0.85,
+            "evidence_count": 142,
+            "evidence_sources": ["genetic_association", "somatic_mutation", "drugs"]
+          },
+          {
+            "target_id": "ENSG00000141510",
+            "disease_id": "EFO_0000311",
+            "disease_name": "cancer",
+            "score": 0.78,
+            "evidence_count": 98,
+            "evidence_sources": ["somatic_mutation", "affected_pathway"]
+          }
+        ],
+        "pagination": {
+          "cursor": "eyJpbmRleCI6MSwic2l6ZSI6MTB9",
+          "total_count": 245,
+          "page_size": 10
+        }
+      }
+    },
+    {
+      "name": "Filter by specific disease",
+      "request": {
+        "target_id": "ENSG00000141510",
+        "disease_id": "EFO_0000616"
+      },
+      "response": {
+        "items": [
+          {
+            "target_id": "ENSG00000141510",
+            "disease_id": "EFO_0000616",
+            "disease_name": "neoplasm",
+            "score": 0.85,
+            "evidence_count": 142,
+            "evidence_sources": ["genetic_association", "somatic_mutation", "drugs"]
+          }
+        ],
+        "pagination": {
+          "cursor": null,
+          "total_count": 1,
+          "page_size": 50
+        }
+      }
+    },
+    {
+      "name": "Invalid target ID",
+      "request": {
+        "target_id": "TP53"
+      },
+      "response": {
+        "success": false,
+        "error": {
+          "code": "UNRESOLVED_ENTITY",
+          "message": "Invalid Ensembl gene ID format",
+          "recovery_hint": "Target ID must match ENSG[11 digits]. Use search_targets to find valid target IDs.",
+          "invalid_input": "TP53"
+        }
+      }
+    },
+    {
+      "name": "Pagination - next page",
+      "request": {
+        "target_id": "ENSG00000141510",
+        "cursor": "eyJpbmRleCI6MSwic2l6ZSI6MTB9",
+        "page_size": 10
+      },
+      "response": {
+        "items": [
+          {
+            "target_id": "ENSG00000141510",
+            "disease_id": "EFO_0001378",
+            "disease_name": "lung cancer",
+            "score": 0.72,
+            "evidence_count": 67,
+            "evidence_sources": ["somatic_mutation", "genetic_association"]
+          }
+        ],
+        "pagination": {
+          "cursor": "eyJpbmRleCI6Miwic2l6ZSI6MTB9",
+          "total_count": 245,
+          "page_size": 10
+        }
+      }
+    }
+  ],
+  "constitution_compliance": {
+    "principle_ii": "Requires resolved Ensembl ID (from Fuzzy-to-Fact workflow)",
+    "principle_iii": "Returns PaginationEnvelope with Association items",
+    "principle_iv": "No slim mode - associations always return full records (~60-80 tokens each)"
+  }
+}

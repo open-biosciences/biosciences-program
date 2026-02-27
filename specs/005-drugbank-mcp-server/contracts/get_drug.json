@@ -1,0 +1,169 @@
+{
+  "tool_name": "get_drug",
+  "description": "Get complete drug record by DrugBank CURIE. Returns full Agentic Biolink entity with cross-references. Requires resolved CURIE from search_drugs (Fuzzy-to-Fact protocol).",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "drugbank_id": {
+        "type": "string",
+        "description": "DrugBank CURIE in format DrugBank:DBXXXXX (e.g., 'DrugBank:DB00945' for aspirin). Must be a valid DrugBank ID.",
+        "pattern": "^DrugBank:DB\\d{5}$",
+        "examples": ["DrugBank:DB00945", "DrugBank:DB00331", "DrugBank:DB01050"]
+      },
+      "slim": {
+        "type": "boolean",
+        "description": "If true, return only id/name/drug_type/categories (~20 tokens). Default false returns full record with cross_references (~115-300 tokens).",
+        "default": false
+      }
+    },
+    "required": ["drugbank_id"]
+  },
+  "returns": {
+    "oneOf": [
+      {
+        "type": "object",
+        "description": "Complete Drug record (full mode)",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^DrugBank:DB\\d{5}$",
+            "description": "DrugBank CURIE"
+          },
+          "name": {
+            "type": "string",
+            "description": "Primary drug name"
+          },
+          "drug_type": {
+            "type": ["string", "null"],
+            "description": "Drug type (Small molecule, Biotech)"
+          },
+          "categories": {
+            "type": ["array", "null"],
+            "items": {"type": "string"},
+            "description": "Therapeutic categories"
+          },
+          "description": {
+            "type": ["string", "null"],
+            "description": "Therapeutic description (excluded in slim mode)"
+          },
+          "indication": {
+            "type": ["string", "null"],
+            "description": "Approved therapeutic uses (excluded in slim mode)"
+          },
+          "mechanism_of_action": {
+            "type": ["string", "null"],
+            "description": "How the drug works (excluded in slim mode)"
+          },
+          "pharmacodynamics": {
+            "type": ["string", "null"],
+            "description": "Effects on the body (excluded in slim mode)"
+          },
+          "absorption": {
+            "type": ["string", "null"],
+            "description": "Absorption characteristics (excluded in slim mode)"
+          },
+          "metabolism": {
+            "type": ["string", "null"],
+            "description": "Metabolic pathway (excluded in slim mode)"
+          },
+          "half_life": {
+            "type": ["string", "null"],
+            "description": "Elimination half-life (excluded in slim mode)"
+          },
+          "cross_references": {
+            "type": "object",
+            "description": "Cross-references to other biological databases (22-key registry, excluded in slim mode)",
+            "properties": {
+              "chembl": {"type": "string"},
+              "uniprot": {"type": "array", "items": {"type": "string"}},
+              "kegg": {"type": "string"},
+              "pubchem_compound": {"type": "string"},
+              "pubchem_substance": {"type": "string"},
+              "pdb": {"type": "string"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": ["id", "name"]
+      },
+      {
+        "$ref": "#/components/schemas/ErrorEnvelope"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "code": "UNRESOLVED_ENTITY",
+      "condition": "DrugBank ID format invalid (does not match ^DrugBank:DB\\d{5}$)",
+      "recovery_hint": "Use format DrugBank:DBXXXXX (e.g., DrugBank:DB00945). Use search_drugs to find valid IDs."
+    },
+    {
+      "code": "ENTITY_NOT_FOUND",
+      "condition": "Valid DrugBank ID format but not found in database",
+      "recovery_hint": "Drug not found in DrugBank database. Verify the ID or use search_drugs to find alternatives."
+    },
+    {
+      "code": "UPSTREAM_ERROR",
+      "condition": "DrugBank API unavailable or returned unexpected error",
+      "recovery_hint": "DrugBank API temporarily unavailable - retry in 60 seconds"
+    }
+  ],
+  "examples": [
+    {
+      "name": "Full mode lookup",
+      "request": {
+        "drugbank_id": "DrugBank:DB00945",
+        "slim": false
+      },
+      "response": {
+        "id": "DrugBank:DB00945",
+        "name": "Aspirin",
+        "drug_type": "Small molecule",
+        "categories": ["Analgesics", "Antipyretics", "Anti-Inflammatory Agents, Non-Steroidal"],
+        "description": "The prototypical analgesic used in the treatment of mild to moderate pain.",
+        "indication": "For the treatment of mild to moderate pain, inflammation, and fever.",
+        "mechanism_of_action": "Irreversibly inhibits cyclooxygenase (COX) enzymes.",
+        "half_life": "15-20 minutes (aspirin); 2-3 hours (salicylate)",
+        "cross_references": {
+          "chembl": "CHEMBL:25",
+          "uniprot": ["UniProtKB:P23219", "UniProtKB:P35354"],
+          "kegg": "D00109",
+          "pubchem_compound": "2244"
+        }
+      }
+    },
+    {
+      "name": "Slim mode lookup",
+      "request": {
+        "drugbank_id": "DrugBank:DB00331",
+        "slim": true
+      },
+      "response": {
+        "id": "DrugBank:DB00331",
+        "name": "Metformin",
+        "drug_type": "Small molecule",
+        "categories": ["Hypoglycemic Agents", "Biguanides"]
+      }
+    },
+    {
+      "name": "Invalid ID format",
+      "request": {
+        "drugbank_id": "DB00945"
+      },
+      "response": {
+        "success": false,
+        "error": {
+          "code": "UNRESOLVED_ENTITY",
+          "message": "Invalid DrugBank CURIE format",
+          "recovery_hint": "Use format DrugBank:DBXXXXX (e.g., DrugBank:DB00945). Use search_drugs to find valid IDs.",
+          "invalid_input": "DB00945"
+        }
+      }
+    }
+  ],
+  "constitution_compliance": {
+    "principle_ii": "Strict lookup - requires resolved CURIE from fuzzy search",
+    "principle_iii": "Returns Drug with cross_references (omit-if-null pattern)",
+    "principle_iv": "Supports slim mode for token budgeting (~20 vs ~115-300 tokens)"
+  }
+}

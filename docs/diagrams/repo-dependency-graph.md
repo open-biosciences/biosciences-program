@@ -6,27 +6,27 @@
 ```mermaid
 flowchart TD
     subgraph wave1["Wave 1: Foundation"]
-        arch["biosciences-architecture\n(ADRs, schemas)"]
-        skills["biosciences-skills\n(6 domain skills)"]
-        program["biosciences-program\n(coordination)"]
-        platskills["platform-skills\n(scaffold, security)"]
+        arch["biosciences-architecture<br/>(ADRs, schemas)"]
+        skills["biosciences-skills<br/>(6 domain skills)"]
+        program["biosciences-program<br/>(coordination)"]
+        platskills["platform-skills<br/>(scaffold, security)"]
     end
 
     subgraph wave2["Wave 2: Platform"]
-        mcp["biosciences-mcp\n(12 FastMCP servers, 697+ tests)"]
-        memory["biosciences-memory\n(Graphiti / Neo4j)"]
+        mcp["biosciences-mcp<br/>(12 FastMCP servers, 697+ tests)"]
+        memory["biosciences-memory<br/>(Graphiti / Neo4j)"]
     end
 
     subgraph wave3["Wave 3: Orchestration"]
-        deep["biosciences-deepagents\n(LangGraph supervisor)"]
-        temporal["biosciences-temporal\n(PydanticAI + Temporal.io)"]
+        deep["biosciences-deepagents<br/>(LangGraph supervisor)"]
+        temporal["biosciences-temporal<br/>(PydanticAI + Temporal.io)"]
     end
 
     subgraph wave4["Wave 4: Validation"]
-        eval["biosciences-evaluation\n(quality metrics)"]
-        research["biosciences-research\n(competency questions)"]
-        edu["biosciences-education\n(training materials)"]
-        workspace["biosciences-workspace-template\n(bootstrap scripts)"]
+        eval["biosciences-evaluation<br/>(quality metrics)"]
+        research["biosciences-research<br/>(competency questions)"]
+        edu["biosciences-education<br/>(training materials)"]
+        workspace["biosciences-workspace-template<br/>(bootstrap scripts)"]
     end
 
     arch -->|schemas| mcp

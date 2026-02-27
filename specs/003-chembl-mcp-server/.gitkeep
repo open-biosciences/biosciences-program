@@ -1,0 +1,8 @@
+# ChEMBL MCP Server Specification
+
+This directory will contain:
+- spec.md - Feature specification (4 User Stories, FRs, Success Criteria)
+- plan.md - Implementation plan with Constitution check
+- tasks.md - Task breakdown for implementation
+- research.md - API research findings
+- quickstart.md - Usage guide (created after implementation)

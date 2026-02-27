@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HGNC MCP Server Tool Contracts",
+  "description": "MCP tool definitions for HGNC gene resolution server",
+  "version": "1.0.0",
+  "tools": [
+    {
+      "name": "search_genes",
+      "description": "Fuzzy search for genes by name, symbol, synonym, or description. Returns ranked candidates for resolution. Use this before calling get_gene.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Search term: gene symbol, name, synonym, or natural language query",
+            "minLength": 2,
+            "examples": ["BRCA1", "breast cancer", "tumor suppressor"]
+          },
+          "slim": {
+            "type": "boolean",
+            "description": "If true, return only id/name/score (~20 tokens). Default false returns full candidates (~115 tokens).",
+            "default": false
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Opaque cursor for pagination. Pass the cursor from a previous response to get the next page."
+          },
+          "page_size": {
+            "type": "integer",
+            "description": "Number of results per page (1-100)",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          }
+        },
+        "required": ["query"]
+      },
+      "outputSchema": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/PaginationEnvelope"
+          },
+          {
+            "$ref": "#/$defs/ErrorEnvelope"
+          }
+        ]
+      }
+    },
+    {
+      "name": "get_gene",
+      "description": "Get complete gene record by HGNC CURIE. Returns full Agentic Biolink entity with cross-references. Requires resolved CURIE from search_genes.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hgnc_id": {
+            "type": "string",
+            "description": "HGNC CURIE in format 'HGNC:NNNNN' (e.g., 'HGNC:1100' for BRCA1)",
+            "pattern": "^HGNC:\\d+$",
+            "examples": ["HGNC:1100", "HGNC:1101"]
+          }
+        },
+        "required": ["hgnc_id"]
+      },
+      "outputSchema": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/Gene"
+          },
+          {
+            "$ref": "#/$defs/ErrorEnvelope"
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "Gene": {
+      "type": "object",
+      "description": "Complete gene record with Agentic Biolink cross-references",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^HGNC:\\d+$",
+          "description": "HGNC CURIE"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Official gene symbol"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full gene name"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Approved", "Withdrawn", "Entry Withdrawn"],
+          "description": "Approval status"
+        },
+        "locus_type": {
+          "type": "string",
+          "description": "Gene type classification"
+        },
+        "locus_group": {
+          "type": "string",
+          "description": "Gene group classification"
+        },
+        "location": {
+          "type": "string",
+          "description": "Chromosomal location"
+        },
+        "alias_symbols": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Alternative symbols"
+        },
+        "cross_references": {
+          "$ref": "#/$defs/CrossReferences"
+        }
+      },
+      "required": ["id", "symbol", "name", "status", "cross_references"]
+    },
+    "CrossReferences": {
+      "type": "object",
+      "description": "External database identifiers (ADR-001 22-key registry). Keys are omitted if no value exists.",
+      "properties": {
+        "ensembl_gene": {
+          "type": "string",
+          "pattern": "^ENSG\\d{11}$"
+        },
+        "ensembl_transcript": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^ENST\\d{11}$" }
+        },
+        "uniprot": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Z0-9]{6,10}$" }
+        },
+        "entrez": {
+          "type": "string",
+          "pattern": "^\\d+$"
+        },
+        "refseq": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[NX][MR]_\\d+$" }
+        },
+        "omim": {
+          "type": "string",
+          "pattern": "^\\d{6}$"
+        },
+        "chembl": {
+          "type": "string",
+          "pattern": "^CHEMBL\\d+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "SearchCandidate": {
+      "type": "object",
+      "description": "Lightweight gene representation for search results",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^HGNC:\\d+$"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["id", "symbol", "name", "score"]
+    },
+    "PaginationEnvelope": {
+      "type": "object",
+      "description": "Canonical pagination envelope (ADR-001 §8)",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/SearchCandidate" }
+        },
+        "pagination": {
+          "type": "object",
+          "properties": {
+            "cursor": {
+              "type": ["string", "null"],
+              "description": "Opaque cursor for next page; null = end"
+            },
+            "total_count": {
+              "type": ["integer", "null"],
+              "description": "Total items if known"
+            },
+            "page_size": {
+              "type": "integer",
+              "default": 50
+            }
+          },
+          "required": ["page_size"]
+        }
+      },
+      "required": ["items", "pagination"]
+    },
+    "ErrorEnvelope": {
+      "type": "object",
+      "description": "Canonical error envelope (ADR-001 §8)",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "const": false
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "UNRESOLVED_ENTITY",
+                "ENTITY_NOT_FOUND",
+                "AMBIGUOUS_QUERY",
+                "RATE_LIMITED",
+                "UPSTREAM_ERROR",
+                "INVALID_CROSS_REFERENCE"
+              ]
+            },
+            "message": {
+              "type": "string"
+            },
+            "recovery_hint": {
+              "type": "string"
+            },
+            "invalid_input": {
+              "type": "string"
+            }
+          },
+          "required": ["code", "message", "recovery_hint"]
+        }
+      },
+      "required": ["success", "error"]
+    }
+  }
+}

@@ -1,0 +1,443 @@
+{
+  "query": "What known genes or pathways are implicated in minimizing Doxorubicin toxicity while preserving its anti-tumor efficacy for NF1?",
+  "disease": {
+    "id": "MONDO:0018975",
+    "name": "neurofibromatosis type 1",
+    "type": "Disease"
+  },
+  "nodes": [
+    {
+      "id": "CHEMBL:53463",
+      "type": "Compound",
+      "label": "Doxorubicin",
+      "properties": {
+        "name": "Doxorubicin",
+        "pubchem": "PubChem:CID31703",
+        "formula": "C27H29NO11",
+        "mechanism": "DNA topoisomerase II alpha inhibitor",
+        "max_phase": 4,
+        "role": "anti-tumor anthracycline"
+      },
+      "synapse_grounding": [{"id": "syn200548", "name": "E-MEXP-2071", "strength": "Strong", "note": "Direct doxorubicin treatment in cardiac tissue"}]
+    },
+    {
+      "id": "HGNC:7765",
+      "type": "Gene",
+      "label": "NF1",
+      "properties": {
+        "symbol": "NF1",
+        "name": "neurofibromin 1",
+        "ensembl": "ENSG00000196712",
+        "uniprot": "P21359",
+        "location": "17q11.2",
+        "function": "Stimulates the GTPase activity of Ras. NF1 shows greater affinity for Ras GAP, but lower specific activity. May be a regulator of Ras activity"
+      },
+      "synapse_grounding": [{"id": "syn44222814", "name": "NF1 mutated Schwann cell treated with selumetinib", "strength": "Strong"}, {"id": "syn61259950", "name": "Phase II Selumetinib in NF1 (NCT02407405)", "strength": "Strong"}, {"id": "syn51658171", "name": "RAS-MAPK + cAMP-PKA in NF1 neurofibromas", "strength": "Moderate"}]
+    },
+    {
+      "id": "HGNC:11989",
+      "type": "Gene",
+      "label": "TOP2A",
+      "properties": {
+        "symbol": "TOP2A",
+        "name": "DNA topoisomerase II alpha",
+        "ensembl": "ENSG00000131747",
+        "uniprot": "P11388",
+        "location": "17q21.2",
+        "chembl_target": "CHEMBL1806"
+      },
+      "synapse_grounding": [{"id": "syn7079983", "name": "FDA TKI-induced cardiotoxicity", "strength": "Moderate"}, {"id": "syn13856689", "name": "TKI cardiotoxicity in iPSC-CMs", "strength": "Moderate"}]
+    },
+    {
+      "id": "HGNC:11990",
+      "type": "Gene",
+      "label": "TOP2B",
+      "properties": {
+        "symbol": "TOP2B",
+        "name": "DNA topoisomerase II beta",
+        "ensembl": "ENSG00000077097",
+        "uniprot": "Q02880",
+        "location": "3p24.2",
+        "chembl_target": "CHEMBL3396"
+      },
+      "synapse_grounding": [{"id": "syn200548", "name": "E-MEXP-2071", "strength": "Strong"}, {"id": "syn7079983", "name": "FDA TKI-induced cardiotoxicity", "strength": "Moderate"}, {"id": "syn13856689", "name": "TKI cardiotoxicity in iPSC-CMs", "strength": "Moderate"}]
+    },
+    {
+      "id": "HGNC:6407",
+      "type": "Gene",
+      "label": "KRAS",
+      "properties": {
+        "symbol": "KRAS",
+        "name": "KRAS proto-oncogene, GTPase",
+        "ensembl": "ENSG00000133703",
+        "uniprot": "P01116",
+        "location": "12p12.1"
+      },
+      "synapse_grounding": [{"id": "syn44222814", "name": "NF1 mutated Schwann cell treated with selumetinib", "strength": "Moderate"}, {"id": "syn51658171", "name": "RAS-MAPK + cAMP-PKA in NF1 neurofibromas", "strength": "Moderate"}]
+    },
+    {
+      "id": "HGNC:7782",
+      "type": "Gene",
+      "label": "NFE2L2",
+      "properties": {
+        "symbol": "NFE2L2",
+        "name": "NFE2 like bZIP transcription factor 2",
+        "alias": "NRF2",
+        "ensembl": "ENSG00000116044",
+        "uniprot": "Q16236",
+        "location": "2q31.2"
+      },
+      "synapse_grounding": [{"id": "syn205590", "name": "GSE8969 Nrf2 KO mouse", "strength": "Moderate"}, {"id": "syn237499", "name": "GSE11952 NFE2L2/Nrf2 oxidant response", "strength": "Moderate"}]
+    },
+    {
+      "id": "HGNC:23177",
+      "type": "Gene",
+      "label": "KEAP1",
+      "properties": {
+        "symbol": "KEAP1",
+        "name": "kelch like ECH associated protein 1",
+        "ensembl": "ENSG00000079999",
+        "uniprot": "Q14145",
+        "location": "19p13.2"
+      },
+      "synapse_grounding": [{"id": "syn205590", "name": "GSE8969 Nrf2 KO mouse", "strength": "Moderate"}]
+    },
+    {
+      "id": "HGNC:11180",
+      "type": "Gene",
+      "label": "SOD2",
+      "properties": {
+        "symbol": "SOD2",
+        "name": "superoxide dismutase 2",
+        "alias": "MnSOD",
+        "ensembl": "ENSG00000291237",
+        "uniprot": "P04179",
+        "location": "6q25.3"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "HGNC:5013",
+      "type": "Gene",
+      "label": "HMOX1",
+      "properties": {
+        "symbol": "HMOX1",
+        "name": "heme oxygenase 1",
+        "alias": "HO-1",
+        "ensembl": "ENSG00000100292",
+        "uniprot": "P09601",
+        "location": "22q12.3"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "HGNC:2874",
+      "type": "Gene",
+      "label": "NQO1",
+      "properties": {
+        "symbol": "NQO1",
+        "name": "NAD(P)H dehydrogenase [quinone] 1"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "HGNC:17768",
+      "type": "Gene",
+      "label": "TDP2",
+      "properties": {
+        "symbol": "TDP2",
+        "name": "tyrosyl-DNA phosphodiesterase 2",
+        "ensembl": "ENSG00000111802",
+        "uniprot": "O95551",
+        "location": "6p22.3"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "CHEMBL:1738",
+      "type": "Compound",
+      "label": "Dexrazoxane",
+      "properties": {
+        "name": "Dexrazoxane",
+        "chembl_hcl": "CHEMBL1200778",
+        "mechanism": "DNA topoisomerase II inhibitor (TOP2B degradation)",
+        "max_phase": 4,
+        "role": "cardioprotectant"
+      },
+      "synapse_grounding": [{"id": "syn200548", "name": "E-MEXP-2071", "strength": "Strong"}]
+    },
+    {
+      "id": "CHEMBL:1614701",
+      "type": "Compound",
+      "label": "Selumetinib",
+      "properties": {
+        "name": "Selumetinib",
+        "mechanism": "Dual specificity mitogen-activated protein kinase kinase; MEK1/2 inhibitor",
+        "max_phase": 4,
+        "role": "NF1-targeted therapy (FDA approved for NF1 plexiform neurofibromas)"
+      },
+      "synapse_grounding": [{"id": "syn44222814", "name": "NF1 mutated Schwann cell treated with selumetinib", "strength": "Strong"}, {"id": "syn61259950", "name": "Phase II Selumetinib in NF1 (NCT02407405)", "strength": "Strong"}]
+    },
+    {
+      "id": "WP:WP2735",
+      "type": "Pathway",
+      "label": "RAF/MAP kinase cascade",
+      "properties": {
+        "source": "WikiPathways",
+        "members_from_graph": ["NF1", "KRAS"]
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "WP:WP3",
+      "type": "Pathway",
+      "label": "Transcriptional activation by NRF2",
+      "properties": {
+        "source": "WikiPathways",
+        "members_from_graph": ["NFE2L2", "KEAP1", "HMOX1", "NQO1"]
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "WP:WP2824",
+      "type": "Pathway",
+      "label": "Detoxification of reactive oxygen species",
+      "properties": {
+        "source": "WikiPathways",
+        "members_from_graph": ["SOD2"]
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "MONDO:0018975",
+      "type": "Disease",
+      "label": "neurofibromatosis type 1",
+      "properties": {
+        "source": "MONDO",
+        "score": 0.885
+      },
+      "synapse_grounding": []
+    },
+    {
+      "id": "EFO:0000318",
+      "type": "Disease",
+      "label": "cardiomyopathy",
+      "properties": {
+        "source": "EFO"
+      },
+      "synapse_grounding": [{"id": "syn7079983", "name": "FDA TKI-induced cardiotoxicity", "strength": "Moderate"}, {"id": "syn13856689", "name": "TKI cardiotoxicity in iPSC-CMs", "strength": "Moderate"}]
+    }
+  ],
+  "edges": [
+    {
+      "source": "CHEMBL:53463",
+      "target": "HGNC:11989",
+      "type": "INHIBITOR",
+      "properties": {
+        "mechanism": "DNA topoisomerase II alpha inhibitor",
+        "phase": 4,
+        "role": "anti-tumor"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "source": "CHEMBL:53463",
+      "target": "HGNC:11990",
+      "type": "INHIBITOR",
+      "properties": {
+        "mechanism": "DNA topoisomerase II inhibitor (off-target)",
+        "role": "cardiotoxicity_mediator"
+      },
+      "synapse_grounding": [{"id": "syn200548", "name": "E-MEXP-2071", "strength": "Strong"}]
+    },
+    {
+      "source": "CHEMBL:1738",
+      "target": "HGNC:11990",
+      "type": "INHIBITOR",
+      "properties": {
+        "mechanism": "DNA topoisomerase II inhibitor",
+        "phase": 4,
+        "role": "cardioprotectant"
+      },
+      "synapse_grounding": [{"id": "syn200548", "name": "E-MEXP-2071", "strength": "Strong"}]
+    },
+    {
+      "source": "HGNC:11990",
+      "target": "EFO:0000318",
+      "type": "ASSOCIATED_WITH",
+      "properties": {
+        "note": "TOP2B-mediated cardiotoxicity in post-mitotic cardiomyocytes"
+      },
+      "synapse_grounding": [{"id": "syn7079983", "name": "FDA TKI-induced cardiotoxicity", "strength": "Moderate"}, {"id": "syn13856689", "name": "TKI cardiotoxicity in iPSC-CMs", "strength": "Moderate"}]
+    },
+    {
+      "source": "HGNC:11990",
+      "target": "HGNC:11989",
+      "type": "INTERACTS",
+      "properties": {
+        "score": 0.973
+      },
+      "synapse_grounding": []
+    },
+    {
+      "source": "HGNC:11990",
+      "target": "HGNC:17768",
+      "type": "INTERACTS",
+      "properties": {
+        "score": 0.820,
+        "evidence": "TDP2 repairs TOP2B-mediated DNA breaks"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "source": "HGNC:7765",
+      "target": "HGNC:6407",
+      "type": "REGULATES",
+      "properties": {
+        "direction": "represses",
+        "mechanism": "NF1 (neurofibromin) is a Ras-GAP that stimulates GTPase activity of KRAS, inactivating it",
+        "score": 0.996
+      },
+      "synapse_grounding": [{"id": "syn44222814", "name": "NF1 mutated Schwann cell treated with selumetinib", "strength": "Moderate"}, {"id": "syn51658171", "name": "RAS-MAPK + cAMP-PKA in NF1", "strength": "Moderate"}]
+    },
+    {
+      "source": "HGNC:7765",
+      "target": "MONDO:0018975",
+      "type": "ASSOCIATED_WITH",
+      "properties": {
+        "score": 0.885,
+        "mechanism": "Loss-of-function mutations in NF1 cause neurofibromatosis type 1"
+      },
+      "synapse_grounding": [{"id": "syn61259950", "name": "Phase II Selumetinib in NF1 (NCT02407405)", "strength": "Strong"}]
+    },
+    {
+      "source": "CHEMBL:1614701",
+      "target": "HGNC:6407",
+      "type": "INHIBITOR",
+      "properties": {
+        "mechanism": "MEK1/2 inhibitor (targets downstream of NF1-RAS axis)",
+        "phase": 4,
+        "note": "FDA approved for NF1 plexiform neurofibromas"
+      },
+      "synapse_grounding": [{"id": "syn44222814", "name": "NF1 mutated Schwann cell treated with selumetinib", "strength": "Strong"}, {"id": "syn61259950", "name": "Phase II Selumetinib in NF1 (NCT02407405)", "strength": "Strong"}]
+    },
+    {
+      "source": "HGNC:7782",
+      "target": "HGNC:23177",
+      "type": "REGULATES",
+      "properties": {
+        "direction": "repressed_by",
+        "mechanism": "KEAP1-mediated ubiquitination and degradation"
+      },
+      "synapse_grounding": [{"id": "syn205590", "name": "GSE8969 Nrf2 KO mouse", "strength": "Moderate"}]
+    },
+    {
+      "source": "HGNC:7782",
+      "target": "HGNC:5013",
+      "type": "REGULATES",
+      "properties": {
+        "direction": "activates",
+        "mechanism": "NRF2 transcriptional target via ARE"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "source": "HGNC:7782",
+      "target": "HGNC:2874",
+      "type": "REGULATES",
+      "properties": {
+        "direction": "activates",
+        "mechanism": "NRF2 transcriptional target via ARE"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "source": "HGNC:7782",
+      "target": "HGNC:11180",
+      "type": "REGULATES",
+      "properties": {
+        "direction": "activates",
+        "mechanism": "NRF2 transcriptional target"
+      },
+      "synapse_grounding": []
+    },
+    {
+      "source": "HGNC:11180",
+      "target": "WP:WP2824",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "source": "HGNC:5013",
+      "target": "WP:WP3",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "source": "HGNC:7782",
+      "target": "WP:WP3",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "source": "HGNC:23177",
+      "target": "WP:WP3",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "source": "HGNC:2874",
+      "target": "WP:WP3",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "source": "HGNC:7765",
+      "target": "WP:WP2735",
+      "type": "MEMBER_OF",
+      "properties": {}
+    },
+    {
+      "source": "HGNC:6407",
+      "target": "WP:WP2735",
+      "type": "MEMBER_OF",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "protocol": "Fuzzy-to-Fact",
+    "phases_completed": [
+      "ANCHOR",
+      "ENRICH",
+      "EXPAND",
+      "TRAVERSE_DRUGS",
+      "TRAVERSE_TRIALS",
+      "VALIDATE",
+      "PERSIST"
+    ],
+    "date": "2026-02-15",
+    "data_sources": [
+      "HGNC",
+      "UniProt",
+      "Open Targets",
+      "STRING",
+      "ChEMBL",
+      "PubChem",
+      "WikiPathways",
+      "ClinicalTrials.gov",
+      "Ensembl",
+      "Entrez"
+    ],
+    "synapse_datasets": [
+      {"id": "syn200548", "name": "E-MEXP-2071: Rat heart doxorubicin/dexrazoxane profiling", "strength": "Strong"},
+      {"id": "syn44222814", "name": "NF1 mutated Schwann cell treated with selumetinib", "strength": "Strong"},
+      {"id": "syn61259950", "name": "Phase II Selumetinib in NF1 Adults (NCT02407405)", "strength": "Strong"},
+      {"id": "syn7079983", "name": "FDA TKI-induced cardiotoxicity (iPSC-CMs)", "strength": "Moderate"},
+      {"id": "syn13856689", "name": "TKI cardiotoxicity in iPSC-derived cardiomyocytes", "strength": "Moderate"},
+      {"id": "syn205590", "name": "GSE8969: Nrf2 KO mouse liver", "strength": "Moderate"},
+      {"id": "syn237499", "name": "GSE11952: NFE2L2/Nrf2 oxidant-responsive transcription", "strength": "Moderate"},
+      {"id": "syn51658171", "name": "RAS-MAPK + cAMP-PKA in NF1 cutaneous neurofibromas", "strength": "Moderate"}
+    ],
+    "notes": "Doxorubicin cardiotoxicity in NF1 patients involves two intersecting axes: (1) TOP2B-mediated off-target cardiotoxicity common to all anthracycline recipients, and (2) NF1-specific RAS-MAPK pathway dysregulation that may modulate cardiac stress responses. NF1 loss-of-function leads to constitutive RAS activation; MEK inhibitors like selumetinib (FDA-approved for NF1 plexiform neurofibromas) target this axis. Dexrazoxane remains the only FDA-approved cardioprotectant (Phase 4), acting by TOP2B degradation. The NRF2/KEAP1 antioxidant pathway and ROS detoxification provide endogenous cardioprotection. Clinical trials include doxorubicin-based chemotherapy for NF1-associated MPNST (NCT00304083), selumetinib for NF1 (NCT02407405, NCT03433183), and emerging cardioprotective strategies (NCT07370506 telmisartan, NCT05271162 empagliflozin)."
+  }
+}

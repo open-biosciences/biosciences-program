@@ -1,0 +1,502 @@
+openapi: 3.0.3
+info:
+  title: IUPHAR/GtoPdb MCP Server API
+  description: |
+    FastMCP server for IUPHAR/BPS Guide to PHARMACOLOGY (GtoPdb) data.
+
+    This is a dual-entity server supporting both pharmacological ligands
+    (drugs, chemicals, metabolites) and targets (receptors, enzymes, transporters).
+
+    Implements the Fuzzy-to-Fact protocol:
+    - Phase 1: Fuzzy search (search_ligands, search_targets)
+    - Phase 2: Strict lookup (get_ligand, get_target)
+  version: 0.1.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: mcp://iuphar-server
+    description: MCP Server (stdio transport)
+
+paths:
+  /search_ligands:
+    post:
+      operationId: search_ligands
+      summary: Fuzzy search for pharmacological ligands
+      description: |
+        Search the IUPHAR/BPS Guide to PHARMACOLOGY database for ligands
+        (drugs, chemicals, metabolites, peptides, antibodies) using natural
+        language queries. Returns ranked candidates for resolution.
+
+        This is Phase 1 of the Fuzzy-to-Fact protocol.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  minLength: 2
+                  description: Search term (ligand name, synonym, drug class, or mechanism)
+                  example: "ibuprofen"
+                type_filter:
+                  type: string
+                  enum:
+                    - Synthetic organic
+                    - Metabolite
+                    - Natural product
+                    - Endogenous peptide
+                    - Peptide
+                    - Antibody
+                    - Inorganic
+                  description: Filter by ligand type
+                approved_only:
+                  type: boolean
+                  default: false
+                  description: Return only approved drugs
+                cursor:
+                  type: string
+                  description: Opaque pagination cursor from previous response
+                page_size:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 50
+                  description: Number of results per page
+      responses:
+        '200':
+          description: Search results or error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/LigandSearchEnvelope'
+                  - $ref: '#/components/schemas/ErrorEnvelope'
+
+  /get_ligand:
+    post:
+      operationId: get_ligand
+      summary: Strict lookup by IUPHAR ligand CURIE
+      description: |
+        Retrieve complete ligand record using a resolved IUPHAR identifier.
+        Returns full Agentic Biolink entity with cross-references to ChEMBL,
+        DrugBank, and PubChem.
+
+        This is Phase 2 of the Fuzzy-to-Fact protocol. Requires a valid CURIE
+        from search_ligands.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - iuphar_id
+              properties:
+                iuphar_id:
+                  type: string
+                  pattern: '^IUPHAR:\d+$'
+                  description: IUPHAR ligand CURIE
+                  example: "IUPHAR:2713"
+      responses:
+        '200':
+          description: Ligand record or error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Ligand'
+                  - $ref: '#/components/schemas/ErrorEnvelope'
+
+  /search_targets:
+    post:
+      operationId: search_targets
+      summary: Fuzzy search for pharmacological targets
+      description: |
+        Search the IUPHAR/BPS Guide to PHARMACOLOGY database for targets
+        (receptors, ion channels, enzymes, transporters) using natural
+        language queries. Returns ranked candidates for resolution.
+
+        This is Phase 1 of the Fuzzy-to-Fact protocol.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                  minLength: 2
+                  description: Search term (target name, gene symbol, or family)
+                  example: "dopamine receptor"
+                type_filter:
+                  type: string
+                  enum:
+                    - GPCR
+                    - NHR
+                    - LGIC
+                    - VGIC
+                    - OtherIC
+                    - Enzyme
+                    - CatalyticReceptor
+                    - Transporter
+                    - OtherProtein
+                  description: Filter by target type
+                cursor:
+                  type: string
+                  description: Opaque pagination cursor from previous response
+                page_size:
+                  type: integer
+                  minimum: 1
+                  maximum: 100
+                  default: 50
+                  description: Number of results per page
+      responses:
+        '200':
+          description: Search results or error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TargetSearchEnvelope'
+                  - $ref: '#/components/schemas/ErrorEnvelope'
+
+  /get_target:
+    post:
+      operationId: get_target
+      summary: Strict lookup by IUPHAR target CURIE
+      description: |
+        Retrieve complete target record using a resolved IUPHAR identifier.
+        Returns full Agentic Biolink entity with cross-references to UniProt,
+        Ensembl, and HGNC.
+
+        This is Phase 2 of the Fuzzy-to-Fact protocol. Requires a valid CURIE
+        from search_targets.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - iuphar_id
+              properties:
+                iuphar_id:
+                  type: string
+                  pattern: '^IUPHAR:\d+$'
+                  description: IUPHAR target CURIE
+                  example: "IUPHAR:215"
+      responses:
+        '200':
+          description: Target record or error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Target'
+                  - $ref: '#/components/schemas/ErrorEnvelope'
+
+components:
+  schemas:
+    # Pagination
+    Pagination:
+      type: object
+      properties:
+        cursor:
+          type: string
+          nullable: true
+          description: Opaque cursor for next page; null = end
+        total_count:
+          type: integer
+          nullable: true
+          description: Total items if known
+        page_size:
+          type: integer
+          default: 50
+          description: Items per page
+
+    # Error handling
+    ErrorCode:
+      type: string
+      enum:
+        - UNRESOLVED_ENTITY
+        - ENTITY_NOT_FOUND
+        - AMBIGUOUS_QUERY
+        - RATE_LIMITED
+        - UPSTREAM_ERROR
+        - INVALID_CROSS_REFERENCE
+      description: Standard error codes from ADR-001
+
+    ErrorDetail:
+      type: object
+      required:
+        - code
+        - message
+        - recovery_hint
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+          description: Human-readable error message
+        recovery_hint:
+          type: string
+          description: Agent-actionable guidance for recovery
+        invalid_input:
+          type: string
+          nullable: true
+          description: The input that caused the error
+
+    ErrorEnvelope:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          enum: [false]
+          description: Always false for errors
+        error:
+          $ref: '#/components/schemas/ErrorDetail'
+
+    # Cross-references (22-key registry subset)
+    CrossReferences:
+      type: object
+      description: External database identifiers. Keys are omitted if no value exists.
+      properties:
+        chembl:
+          type: string
+          pattern: '^CHEMBL\d+$'
+          description: ChEMBL compound/target ID
+        drugbank:
+          type: string
+          pattern: '^DB\d{5}$'
+          description: DrugBank ID
+        pubchem_compound:
+          type: string
+          pattern: '^\d+$'
+          description: PubChem CID
+        uniprot:
+          type: array
+          items:
+            type: string
+            pattern: '^[A-Z0-9]{6,10}$'
+          description: UniProt accessions
+        ensembl_gene:
+          type: string
+          pattern: '^ENSG\d{11}$'
+          description: Ensembl gene ID
+        entrez:
+          type: string
+          pattern: '^\d+$'
+          description: NCBI Entrez gene ID
+        refseq:
+          type: array
+          items:
+            type: string
+            pattern: '^[NX][MR]_\d+$'
+          description: RefSeq accessions
+        omim:
+          type: string
+          pattern: '^\d{6}$'
+          description: OMIM ID
+        orphanet:
+          type: string
+          pattern: '^ORPHA:\d+$'
+          description: Orphanet ID
+
+    # Ligand models
+    LigandSearchCandidate:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - score
+      properties:
+        id:
+          type: string
+          pattern: '^IUPHAR:\d+$'
+          description: IUPHAR ligand CURIE
+          example: "IUPHAR:2713"
+        name:
+          type: string
+          description: Ligand display name
+          example: "ibuprofen"
+        type:
+          type: string
+          description: Ligand classification
+          example: "Synthetic organic"
+        approved:
+          type: boolean
+          default: false
+          description: Approved drug status
+        score:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Relevance score
+
+    LigandSearchEnvelope:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LigandSearchCandidate'
+          description: Ligand search results
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Ligand:
+      type: object
+      required:
+        - id
+        - ligand_id
+        - name
+        - type
+        - approved
+        - cross_references
+      properties:
+        id:
+          type: string
+          pattern: '^IUPHAR:\d+$'
+          description: IUPHAR ligand CURIE
+        ligand_id:
+          type: integer
+          description: Raw GtoPdb numeric ID
+        name:
+          type: string
+          description: Display name
+        approved_name:
+          type: string
+          nullable: true
+          description: International Nonproprietary Name (INN)
+        type:
+          type: string
+          description: Ligand classification
+        abbreviation:
+          type: string
+          nullable: true
+          description: Short name
+        approved:
+          type: boolean
+          description: Regulatory approval status
+        approval_source:
+          type: string
+          nullable: true
+          description: Approval source (e.g., "FDA (1974)")
+        who_essential:
+          type: boolean
+          nullable: true
+          description: WHO essential medicine list
+        withdrawn:
+          type: boolean
+          nullable: true
+          description: Withdrawal status
+        synonyms:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: Brand names and synonyms
+        cross_references:
+          $ref: '#/components/schemas/CrossReferences'
+
+    # Target models
+    TargetSearchCandidate:
+      type: object
+      required:
+        - id
+        - name
+        - family
+        - type
+        - score
+      properties:
+        id:
+          type: string
+          pattern: '^IUPHAR:\d+$'
+          description: IUPHAR target CURIE
+          example: "IUPHAR:215"
+        name:
+          type: string
+          description: Target display name (HTML stripped)
+          example: "D2 receptor"
+        family:
+          type: string
+          description: Target family/class
+          example: "GPCR"
+        type:
+          type: string
+          description: Full classification type
+        score:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          description: Relevance score
+
+    TargetSearchEnvelope:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TargetSearchCandidate'
+          description: Target search results
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Target:
+      type: object
+      required:
+        - id
+        - target_id
+        - name
+        - target_family
+        - species
+        - cross_references
+      properties:
+        id:
+          type: string
+          pattern: '^IUPHAR:\d+$'
+          description: IUPHAR target CURIE
+        target_id:
+          type: integer
+          description: Raw GtoPdb numeric ID
+        name:
+          type: string
+          description: Display name (HTML stripped)
+        target_family:
+          type: string
+          description: Target family classification
+        family_ids:
+          type: array
+          items:
+            type: integer
+          nullable: true
+          description: Parent family IDs
+        species:
+          type: string
+          default: "Homo sapiens"
+          description: Primary species
+        gene_symbol:
+          type: string
+          nullable: true
+          description: Human gene symbol
+        cross_references:
+          $ref: '#/components/schemas/CrossReferences'

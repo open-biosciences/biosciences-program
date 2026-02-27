@@ -1,0 +1,107 @@
+{
+  "tool_name": "get_compounds_batch",
+  "description": "Batch lookup for multiple compounds to prevent thread pool exhaustion. Use this for bulk operations instead of calling get_compound repeatedly.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "chembl_ids": {
+        "type": "array",
+        "description": "List of ChEMBL CURIEs (e.g., ['CHEMBL:25', 'CHEMBL:941']).",
+        "items": {
+          "type": "string",
+          "pattern": "^CHEMBL:[0-9]+$"
+        },
+        "minItems": 1,
+        "maxItems": 100,
+        "examples": [["CHEMBL:25", "CHEMBL:941", "CHEMBL:1201583"]]
+      },
+      "slim": {
+        "type": "boolean",
+        "description": "If true (default), return minimal fields to reduce tokens.",
+        "default": true
+      }
+    },
+    "required": ["chembl_ids"]
+  },
+  "returns": {
+    "oneOf": [
+      {
+        "type": "array",
+        "description": "List of Compound records (or ErrorEnvelopes for individual failures)",
+        "items": {
+          "oneOf": [
+            {"$ref": "#/components/schemas/Compound"},
+            {"$ref": "#/components/schemas/ErrorEnvelope"}
+          ]
+        }
+      },
+      {
+        "$ref": "#/components/schemas/ErrorEnvelope"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "code": "UNRESOLVED_ENTITY",
+      "condition": "One or more CURIEs have invalid format",
+      "recovery_hint": "All CURIEs must match format 'CHEMBL:NNNNN'"
+    },
+    {
+      "code": "RATE_LIMITED",
+      "condition": "Rate limit exceeded",
+      "recovery_hint": "Wait {backoff_seconds}s before retrying"
+    },
+    {
+      "code": "UPSTREAM_ERROR",
+      "condition": "ChEMBL API error affects entire batch",
+      "recovery_hint": "ChEMBL API temporarily unavailable - retry in 60 seconds"
+    }
+  ],
+  "examples": [
+    {
+      "request": {
+        "chembl_ids": ["CHEMBL:25", "CHEMBL:941"],
+        "slim": true
+      },
+      "response": [
+        {
+          "id": "CHEMBL:25",
+          "name": "Aspirin",
+          "molecular_formula": "C9H8O4"
+        },
+        {
+          "id": "CHEMBL:941",
+          "name": "Imatinib",
+          "molecular_formula": "C29H31N7O"
+        }
+      ]
+    },
+    {
+      "request": {
+        "chembl_ids": ["CHEMBL:25", "CHEMBL:99999999"],
+        "slim": true
+      },
+      "response": [
+        {
+          "id": "CHEMBL:25",
+          "name": "Aspirin",
+          "molecular_formula": "C9H8O4"
+        },
+        {
+          "success": false,
+          "error": {
+            "code": "ENTITY_NOT_FOUND",
+            "message": "ChEMBL compound not found",
+            "recovery_hint": "ChEMBL ID not found. Verify CURIE from search_compounds results.",
+            "invalid_input": "CHEMBL:99999999"
+          }
+        }
+      ]
+    }
+  ],
+  "constitution_compliance": {
+    "principle_i": "Mitigates thread pool exhaustion from run_in_executor",
+    "principle_ii": "Strict lookup - requires resolved CURIEs",
+    "principle_iv": "Defaults to slim=True for batch operations"
+  }
+}

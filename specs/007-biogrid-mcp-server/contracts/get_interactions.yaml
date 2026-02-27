@@ -1,0 +1,211 @@
+# Tool Contract: get_interactions
+
+tool_name: get_interactions
+phase: strict
+protocol: Gene Symbol Query (simplified Fuzzy-to-Fact Phase 2)
+
+description: |
+  Retrieve genetic and protein interactions for a validated gene symbol.
+  Returns experimentally validated interactions with evidence types and
+  literature references.
+
+inputs:
+  gene_symbol:
+    type: string
+    required: true
+    description: |
+      Validated gene symbol (uppercase).
+      MUST be validated via search_genes first.
+    validation: |
+      Must match pattern: ^[A-Z0-9][A-Z0-9\-]{0,14}$
+      Client enforces uppercase (case normalization in search_genes)
+    examples:
+      - "TP53"
+      - "BRCA1"
+      - "HLA-A"
+
+  organism:
+    type: integer
+    required: false
+    default: 9606
+    description: NCBI Taxonomy ID filter
+    examples:
+      - 9606  # Homo sapiens
+      - 10090 # Mus musculus
+
+  max_results:
+    type: integer
+    required: false
+    default: 10000
+    maximum: 10000
+    description: |
+      Maximum number of interactions to return.
+      BioGRID default is 10,000 (NFR-003).
+    examples:
+      - 100   # For testing or well-connected genes
+      - 10000 # Maximum allowed
+
+  include_interspecies:
+    type: boolean
+    required: false
+    default: false
+    description: |
+      Whether to include cross-species interactions.
+      Default: false (same-species only)
+
+  slim:
+    type: boolean
+    required: false
+    default: false
+    description: |
+      Token budgeting parameter (Constitution Principle IV).
+      When true, returns minimal interaction fields (~15 tokens/interaction):
+        - symbol_b, experimental_system_type only per interaction
+        - Omits: biogrid_interaction_id, symbol_a, experimental_system,
+          pubmed_id, throughput, organism IDs, entrez IDs, cross_references
+      When false (default), returns full records (~100 tokens/interaction).
+
+output:
+  type: InteractionResult
+  description: Complete interaction network with counts
+  example:
+    query_gene: "TP53"
+    interactions:
+      - biogrid_interaction_id: 1234567
+        symbol_a: "TP53"
+        symbol_b: "MDM2"
+        experimental_system: "Affinity Capture-Western"
+        experimental_system_type: "physical"
+        pubmed_id: 12345678
+        throughput: "Low Throughput"
+        organism_a_id: 9606
+        organism_b_id: 9606
+        entrez_gene_a: 7157
+        entrez_gene_b: 4193
+    cross_references:
+      entrez: "7157"
+    physical_count: 450
+    genetic_count: 50
+    total_count: 500
+
+errors:
+  ENTITY_NOT_FOUND:
+    http_status: 404
+    message: "No interactions found for gene symbol: {gene_symbol}"
+    recovery_hint: "Verify gene symbol is correct and has known interactions in BioGRID. Try search_genes to validate symbol first."
+    trigger: BioGRID returns empty result set
+    example_invalid_input: "NONEXISTENT"
+
+  UPSTREAM_ERROR:
+    http_status: 502
+    message: "BioGRID API error: {details}"
+    recovery_hint: "Check BIOGRID_API_KEY is valid. Get free key at https://webservice.thebiogrid.org/"
+    trigger: BioGRID API returns error (missing/invalid API key, 500, timeout)
+    example_invalid_input: ""
+
+  RATE_LIMITED:
+    http_status: 429
+    message: "Rate limit exceeded"
+    recovery_hint: "Wait 1 second before retrying. Rate limit: 2 req/sec"
+    trigger: Client-side rate limiting or HTTP 429 from BioGRID
+    example_invalid_input: ""
+
+examples:
+  - name: Get TP53 interactions (human)
+    input:
+      gene_symbol: "TP53"
+      organism: 9606
+      max_results: 10
+    output:
+      query_gene: "TP53"
+      interactions:
+        - biogrid_interaction_id: 1234567
+          symbol_a: "TP53"
+          symbol_b: "MDM2"
+          experimental_system: "Affinity Capture-Western"
+          experimental_system_type: "physical"
+          pubmed_id: 12345678
+          throughput: "Low Throughput"
+          organism_a_id: 9606
+          organism_b_id: 9606
+          entrez_gene_a: 7157
+          entrez_gene_b: 4193
+      cross_references:
+        entrez: "7157"
+      physical_count: 8
+      genetic_count: 2
+      total_count: 10
+
+  - name: Get BRCA1 interactions with high limit
+    input:
+      gene_symbol: "BRCA1"
+      organism: 9606
+      max_results: 1000
+    output:
+      query_gene: "BRCA1"
+      interactions: [...]  # Truncated for brevity
+      cross_references:
+        entrez: "672"
+      physical_count: 890
+      genetic_count: 110
+      total_count: 1000
+
+  - name: Get mouse Tp53 interactions
+    input:
+      gene_symbol: "TP53"
+      organism: 10090
+      max_results: 100
+    output:
+      query_gene: "TP53"
+      interactions: [...]
+      cross_references:
+        entrez: "22059"
+      physical_count: 75
+      genetic_count: 25
+      total_count: 100
+
+  - name: Cross-species interactions
+    input:
+      gene_symbol: "TP53"
+      organism: 9606
+      max_results: 100
+      include_interspecies: true
+    output:
+      query_gene: "TP53"
+      interactions:
+        - biogrid_interaction_id: 7654321
+          symbol_a: "TP53"
+          symbol_b: "SV40_TAg"
+          experimental_system: "Affinity Capture-Western"
+          experimental_system_type: "physical"
+          organism_a_id: 9606
+          organism_b_id: 10632  # Simian virus 40
+          ...
+      cross_references:
+        entrez: "7157"
+      physical_count: 95
+      genetic_count: 5
+      total_count: 100
+
+usage_notes:
+  - ALWAYS call search_genes first to validate gene symbol
+  - Gene symbols are case-sensitive after validation (uppercase only)
+  - Interactions are sorted by biogrid_interaction_id (ascending)
+  - physical_count + genetic_count = total_count
+  - total_count = len(interactions)
+  - PubMed ID may be null for some high-throughput studies
+  - Throughput may be null if not provided by BioGRID
+  - Cross-species interactions disabled by default (same-species only)
+
+performance:
+  - Target: P95 < 3 seconds (NFR-004)
+  - Well-connected genes (TP53, BRCA1): ~1-2 seconds
+  - Sparse genes: ~200-500ms
+  - Rate limit: 2 req/sec client-side
+
+adr_compliance:
+  - "Simplified Fuzzy-to-Fact: Requires validated gene symbol from search_genes"
+  - "InteractionResult includes cross_references (ADR-001 §4)"
+  - "ErrorEnvelope for all errors (ADR-001 §8)"
+  - "Entrez Gene ID mapped to cross_references.entrez"
+  - "Omit entrez key if not available (never null)"

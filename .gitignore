@@ -62,3 +62,6 @@ htmlcov/
 
 # docs/video/
 docs/video/
+
+# Windows metadata
+*Zone.Identifier

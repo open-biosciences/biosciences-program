@@ -1,0 +1,136 @@
+{
+  "tool_name": "search_drugs",
+  "description": "Fuzzy search for drugs by name, brand name, or indication. Returns ranked candidates for resolution. Use this before calling get_drug.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search term (drug name, brand name, or indication). Minimum 2 characters required.",
+        "minLength": 2,
+        "examples": ["aspirin", "metformin", "Lipitor", "diabetes"]
+      },
+      "slim": {
+        "type": "boolean",
+        "description": "If true, return only id/name/drug_type/categories/score (~20 tokens per entity). Default false returns full candidates.",
+        "default": false
+      },
+      "cursor": {
+        "type": ["string", "null"],
+        "description": "Opaque cursor for pagination. Pass from previous response for next page.",
+        "default": null
+      },
+      "page_size": {
+        "type": "integer",
+        "description": "Number of results per page (1-100, default 50).",
+        "minimum": 1,
+        "maximum": 100,
+        "default": 50
+      }
+    },
+    "required": ["query"]
+  },
+  "returns": {
+    "oneOf": [
+      {
+        "type": "object",
+        "description": "PaginationEnvelope with DrugSearchCandidate items",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^DrugBank:DB\\d{5}$",
+                  "description": "DrugBank CURIE"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Primary drug name"
+                },
+                "drug_type": {
+                  "type": ["string", "null"],
+                  "description": "Drug type (Small molecule, Biotech)"
+                },
+                "categories": {
+                  "type": ["array", "null"],
+                  "items": {"type": "string"},
+                  "description": "Therapeutic categories"
+                },
+                "score": {
+                  "type": "number",
+                  "minimum": 0.0,
+                  "maximum": 1.0,
+                  "description": "Relevance score"
+                }
+              },
+              "required": ["id", "name", "score"]
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "cursor": {"type": ["string", "null"]},
+              "total_count": {"type": ["integer", "null"]},
+              "page_size": {"type": "integer"}
+            },
+            "required": ["cursor", "page_size"]
+          }
+        },
+        "required": ["items", "pagination"]
+      },
+      {
+        "$ref": "#/components/schemas/ErrorEnvelope"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "code": "AMBIGUOUS_QUERY",
+      "condition": "Query too short (<2 characters)",
+      "recovery_hint": "Minimum query length is 2 characters"
+    },
+    {
+      "code": "RATE_LIMITED",
+      "condition": "Rate limit exceeded (>10 req/s)",
+      "recovery_hint": "Wait {backoff_seconds}s before retrying"
+    },
+    {
+      "code": "UPSTREAM_ERROR",
+      "condition": "DrugBank API unavailable",
+      "recovery_hint": "DrugBank API temporarily unavailable - retry in 60 seconds"
+    }
+  ],
+  "examples": [
+    {
+      "request": {
+        "query": "aspirin",
+        "slim": false,
+        "page_size": 10
+      },
+      "response": {
+        "items": [
+          {
+            "id": "DrugBank:DB00945",
+            "name": "Aspirin",
+            "drug_type": "Small molecule",
+            "categories": ["Analgesics", "Antipyretics", "Anti-Inflammatory Agents, Non-Steroidal"],
+            "score": 1.0
+          }
+        ],
+        "pagination": {
+          "cursor": "eyJwYWdlIjoyLCJwZXJfcGFnZSI6MTB9",
+          "total_count": 5,
+          "page_size": 10
+        }
+      }
+    }
+  ],
+  "constitution_compliance": {
+    "principle_ii": "Fuzzy search - accepts natural language",
+    "principle_iii": "Returns PaginationEnvelope",
+    "principle_iv": "Supports slim mode for token budgeting"
+  }
+}

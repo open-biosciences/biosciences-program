@@ -1,0 +1,180 @@
+# Tool Contract: search_genes
+
+tool_name: search_genes
+phase: fuzzy
+protocol: Fuzzy-to-Fact Phase 1
+
+description: |
+  Fuzzy search for genes in NCBI Gene database by gene symbol, name, or description.
+  Returns ranked candidates with NCBIGene CURIEs for Phase 2 strict lookup.
+  Uses NCBI E-utilities esearch + esummary two-step pattern.
+
+inputs:
+  query:
+    type: string
+    required: true
+    min_length: 2
+    description: Search term (gene symbol, name, description, or natural language)
+    examples:
+      - "BRCA1"
+      - "tumor suppressor"
+      - "TP53"
+
+  organism:
+    type: string
+    required: false
+    default: null  # All organisms
+    description: Filter by organism name (maps to NCBI taxonomy)
+    examples:
+      - "human"
+      - "Homo sapiens"
+      - "mouse"
+      - "Mus musculus"
+
+  page_size:
+    type: integer
+    required: false
+    default: 50
+    min: 1
+    max: 100
+    description: Number of results per page
+
+  cursor:
+    type: string
+    required: false
+    description: Opaque cursor for pagination (from previous response)
+
+output:
+  envelope: PaginationEnvelope
+  content_type: GeneSearchCandidate
+  schema:
+    items:
+      type: array
+      items:
+        type: object
+        required: [id, symbol, name, organism, score]
+        properties:
+          id:
+            type: string
+            pattern: "^NCBIGene:\\d+$"
+            example: "NCBIGene:7157"
+          symbol:
+            type: string
+            example: "TP53"
+          name:
+            type: string
+            example: "tumor protein p53"
+          description:
+            type: string
+            nullable: true
+            example: "cellular tumor antigen p53; phosphoprotein p53"
+          organism:
+            type: string
+            example: "Homo sapiens"
+          score:
+            type: number
+            minimum: 0.0
+            maximum: 1.0
+            example: 0.95
+    pagination:
+      type: object
+      properties:
+        cursor:
+          type: string
+          nullable: true
+        total_count:
+          type: integer
+        page_size:
+          type: integer
+
+errors:
+  AMBIGUOUS_QUERY:
+    http_status: 400
+    message: "Query too short or too generic"
+    recovery_hint: "Provide at least 2 characters. Add organism filter to narrow results."
+    trigger: Query length < 2
+
+  RATE_LIMITED:
+    http_status: 429
+    message: "Exceeded NCBI rate limit"
+    recovery_hint: "Wait and retry. Add NCBI_API_KEY env var for 10 req/s limit (vs 3 req/s default)"
+    trigger: More than 3 (or 10 with key) requests per second
+
+  UPSTREAM_ERROR:
+    http_status: 502/503/504
+    message: "NCBI E-utilities API error"
+    recovery_hint: "NCBI service may be temporarily unavailable. Retry after a short delay."
+    trigger: NCBI API returns 5xx error
+
+examples:
+  - name: Search for TP53 gene
+    input:
+      query: "TP53"
+      organism: "human"
+      page_size: 10
+    output:
+      items:
+        - id: "NCBIGene:7157"
+          symbol: "TP53"
+          name: "tumor protein p53"
+          description: "cellular tumor antigen p53; phosphoprotein p53"
+          organism: "Homo sapiens"
+          score: 1.0
+      pagination:
+        cursor: null
+        total_count: 1
+        page_size: 10
+
+  - name: Search for BRCA genes (multiple results)
+    input:
+      query: "BRCA"
+      organism: "human"
+      page_size: 5
+    output:
+      items:
+        - id: "NCBIGene:672"
+          symbol: "BRCA1"
+          name: "BRCA1 DNA repair associated"
+          organism: "Homo sapiens"
+          score: 1.0
+        - id: "NCBIGene:675"
+          symbol: "BRCA2"
+          name: "BRCA2 DNA repair associated"
+          organism: "Homo sapiens"
+          score: 0.95
+      pagination:
+        cursor: "eyJvZmZzZXQiOiA1fQ=="
+        total_count: 15
+        page_size: 5
+
+  - name: Pagination continuation
+    input:
+      query: "kinase"
+      cursor: "eyJvZmZzZXQiOiA1MH0="
+      page_size: 50
+    output:
+      items:
+        - id: "NCBIGene:5594"
+          symbol: "MAPK1"
+          name: "mitogen-activated protein kinase 1"
+          organism: "Homo sapiens"
+          score: 0.5
+      pagination:
+        cursor: "eyJvZmZzZXQiOiAxMDB9"
+        total_count: 500
+        page_size: 50
+
+  - name: Query too short error
+    input:
+      query: "A"
+    error:
+      code: "AMBIGUOUS_QUERY"
+      message: "Query too short or too generic"
+      recovery_hint: "Provide at least 2 characters. Add organism filter to narrow results."
+      invalid_input: "A"
+
+adr_compliance:
+  - ADR-001 Section 3: Fuzzy-to-Fact Phase 1 (returns ranked candidates)
+  - ADR-001 Section 8: Canonical PaginationEnvelope
+  - Constitution III: Schema Determinism
+  - Constitution v1.1: Rate limiting (3 or 10 req/s based on API key)

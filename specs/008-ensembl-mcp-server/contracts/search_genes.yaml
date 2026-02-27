@@ -1,0 +1,163 @@
+# Tool Contract: search_genes
+
+tool_name: search_genes
+phase: fuzzy
+protocol: Fuzzy-to-Fact Phase 1
+
+description: |
+  Fuzzy search for genes by symbol, name, or description.
+  Returns ranked candidates with Ensembl Gene IDs for Phase 2 strict lookup.
+
+inputs:
+  query:
+    type: string
+    required: true
+    min_length: 2
+    description: Search term (gene symbol, name, or description)
+    examples:
+      - "TP53"
+      - "tumor protein"
+      - "BRCA1"
+
+  species:
+    type: string
+    required: false
+    default: "homo_sapiens"
+    description: Species name (e.g., homo_sapiens, mus_musculus) or alias (human, mouse)
+    examples:
+      - "homo_sapiens"
+      - "human"
+      - "mus_musculus"
+
+  page_size:
+    type: integer
+    required: false
+    default: 50
+    min: 1
+    max: 100
+    description: Number of results per page
+
+  cursor:
+    type: string
+    required: false
+    description: Opaque cursor for pagination (from previous response)
+
+  slim:
+    type: boolean
+    required: false
+    default: false
+    description: Return minimal fields for token efficiency (~25 vs ~150 tokens)
+
+output:
+  envelope: PaginationEnvelope
+  content_type: GeneSearchCandidate
+  schema:
+    items:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            pattern: "^ENSG\\d{11}$"
+            example: "ENSG00000141510"
+          symbol:
+            type: string
+            example: "TP53"
+          name:
+            type: string
+            example: "tumor protein p53"
+          biotype:
+            type: string
+            example: "protein_coding"
+          species:
+            type: string
+            example: "homo_sapiens"
+          score:
+            type: number
+            minimum: 0.0
+            maximum: 1.0
+            example: 0.95
+    pagination:
+      type: object
+      properties:
+        cursor:
+          type: string
+          nullable: true
+        total_count:
+          type: integer
+        page_size:
+          type: integer
+
+errors:
+  AMBIGUOUS_QUERY:
+    http_status: 400
+    message: "Query too short or matches too many results"
+    recovery_hint: "Provide at least 2 characters or refine your search term"
+    trigger: Query length < 2 OR result count > 100 with query length < 3
+
+  RATE_LIMITED:
+    http_status: 429
+    message: "Exceeded rate limit (15 requests/second)"
+    recovery_hint: "Wait for the time specified in Retry-After header before retrying"
+    trigger: Ensembl API returns HTTP 429
+
+  UPSTREAM_ERROR:
+    http_status: 502/503/504
+    message: "Ensembl API error"
+    recovery_hint: "Retry after a short delay"
+    trigger: Ensembl API returns 5xx error
+
+examples:
+  - name: Basic search for TP53
+    input:
+      query: "TP53"
+      species: "homo_sapiens"
+      page_size: 10
+    output:
+      items:
+        - id: "ENSG00000141510"
+          symbol: "TP53"
+          name: "tumor protein p53"
+          biotype: "protein_coding"
+          species: "homo_sapiens"
+          score: 1.0
+      pagination:
+        cursor: null
+        total_count: 1
+        page_size: 10
+
+  - name: Search with species alias
+    input:
+      query: "BRCA1"
+      species: "human"
+    output:
+      items:
+        - id: "ENSG00000012048"
+          symbol: "BRCA1"
+          name: "BRCA1 DNA repair associated"
+          biotype: "protein_coding"
+          species: "homo_sapiens"
+          score: 1.0
+      pagination:
+        cursor: null
+        total_count: 1
+        page_size: 50
+
+  - name: Ambiguous query error
+    input:
+      query: "p"
+      species: "human"
+    error:
+      code: "AMBIGUOUS_QUERY"
+      message: "Query too short or matches too many results"
+      recovery_hint: "Provide at least 2 characters or refine your search term"
+      invalid_input: "p"
+
+adr_compliance:
+  - ADR-001 section 3: Fuzzy-to-Fact Phase 1 (returns ranked candidates)
+  - ADR-001 section 8: Canonical PaginationEnvelope
+  - Constitution I: Async-First (httpx async client)
+  - Constitution III: Schema Determinism
+  - Constitution IV: Token Budgeting (slim mode support)
+  - Constitution v1.1: Rate limiting (15 req/s with backoff)

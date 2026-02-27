@@ -6,15 +6,15 @@
 ```mermaid
 flowchart LR
     subgraph agents["Agent Team"]
-        a1["Agent 1\nProgram Director"]
-        a2["Agent 2\nPlatform Architect"]
-        a3["Agent 3\nMCP Platform Engineer"]
-        a4["Agent 4\nMemory Engineer"]
-        a5["Agent 5\nDeep Agents Engineer"]
-        a6["Agent 6\nResearch Workflows"]
-        a7["Agent 7\nTemporal Engineer"]
-        a8["Agent 8\nQuality & Skills"]
-        a9["Agent 9\nEducation & Workspace"]
+        a1["Agent 1<br/>Program Director"]
+        a2["Agent 2<br/>Platform Architect"]
+        a3["Agent 3<br/>MCP Platform Engineer"]
+        a4["Agent 4<br/>Memory Engineer"]
+        a5["Agent 5<br/>Deep Agents Engineer"]
+        a6["Agent 6<br/>Research Workflows"]
+        a7["Agent 7<br/>Temporal Engineer"]
+        a8["Agent 8<br/>Quality & Skills"]
+        a9["Agent 9<br/>Education & Workspace"]
     end
 
     subgraph repos["Repositories"]
