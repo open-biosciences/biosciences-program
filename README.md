@@ -36,7 +36,7 @@ This platform evolved through three distinct implementations before becoming a p
 
 ## The Platform
 
-Eleven repositories under the [open-biosciences](https://github.com/open-biosciences) GitHub organization, operated by a 9-agent team with clear ownership boundaries.
+Thirteen repositories under the [open-biosciences](https://github.com/open-biosciences) GitHub organization, operated by a 9-agent team with clear ownership boundaries.
 
 | Repository | Role | Wave |
 |------------|------|------|
@@ -52,6 +52,7 @@ Eleven repositories under the [open-biosciences](https://github.com/open-bioscie
 | [biosciences-research](https://github.com/open-biosciences/biosciences-research) | Competency questions, graph-builder workflows | ⬜ Wave 4 |
 | [biosciences-education](https://github.com/open-biosciences/biosciences-education) | Training materials, tutorials, onboarding | ⬜ Wave 4 |
 | [biosciences-workspace-template](https://github.com/open-biosciences/biosciences-workspace-template) | Bootstrap scripts, workspace config templates | ⬜ Wave 4 |
+| [marketplace](https://github.com/open-biosciences/marketplace) | Plugin marketplace (15 plugins in `.claude-plugin/` format) | ✅ |
 
 → Full agent team definitions: [AGENTS.md](AGENTS.md)
 
@@ -104,7 +105,7 @@ The platform is built around concrete research questions: *"What are the synthet
 
 ## Get Involved
 
-The platform is MIT-licensed and structured for external contribution. Here are three entry points depending on your background:
+The platform is MIT-licensed and structured for external contribution. The [marketplace](https://github.com/open-biosciences/marketplace) packages all MCP servers, skills, and commands into installable plugins. Here are three entry points depending on your background:
 
 **Researcher** — Start with the competency questions catalog in [biosciences-research](https://github.com/open-biosciences/biosciences-research). Each scenario documents the research question, the databases queried, and re-run instructions. You can run any scenario today against the live MCP layer.
 

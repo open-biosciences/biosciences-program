@@ -161,8 +161,8 @@ Owns durable execution. Follows **PydanticAI First, Temporal Second** design:
 
 | Field | Value |
 |-------|-------|
-| **Primary Repos** | `biosciences-evaluation`, `biosciences-skills` |
-| **Role** | Evaluation framework, shared skills library, cross-repo test quality |
+| **Primary Repos** | `biosciences-evaluation`, `biosciences-skills`, `marketplace` |
+| **Role** | Evaluation framework, shared skills library, cross-repo test quality, marketplace distribution |
 | **Responsibilities** | Evaluation rubrics, quality metrics, skill authoring (ADR-002), SpecKit command maintenance (ADR-003), cross-repo test coverage analysis |
 | **Key Artifacts** | Evaluation rubrics, quality dashboards, 6 domain skills, 15 SpecKit commands |
 | **Interfaces With** | All agents (quality gates apply to every repo) |
