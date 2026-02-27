@@ -147,10 +147,10 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 - [x] All 9 skill folders renamed to `biosciences-*` in `.deepagents/skills/`
 - [x] No references to `cq14_temporal` or `lifesciences-research` remain in `src/`
 - [x] `biosciences-mcp` HTTP entry present in all 5 `.mcp.json` locations
-- [ ] `uv run langgraph dev` starts on port `:2024` (runtime verification pending)
-- [ ] `uv run python -m src.biosciences_temporal.scripts.run_agent --gene-a BRCA1 --gene-b TP53` runs without import errors (runtime verification pending)
-- [ ] `docker compose up -d` starts Temporal on ports 7233/8233 (runtime verification pending)
-- [ ] `yarn` installs + dev server runs on `:3000` in `apps/web/` (runtime verification pending)
+- [x] `uv run langgraph dev` starts on port `:2024` (verified 2026-02-27)
+- [x] `uv run python -m src.biosciences_temporal.scripts.run_agent --gene-a BRCA1 --gene-b TP53` runs without import errors (verified 2026-02-27)
+- [x] `docker compose up -d` starts Temporal on ports 7233/8233 (verified 2026-02-27)
+- [x] `yarn` installs + dev server runs on `:3000` in `apps/web/` (verified 2026-02-27)
 
 ---
 
@@ -163,17 +163,19 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 **Source:** `lifesciences-research` docs/ + `graphiti-fastmcp`
 **Depends On:** Wave 2 + Wave 3 (graphiti-fastmcp usage patterns confirmed through orchestration layer)
 **Linear:** AGE-195 (parent)
-**Commit:** `3ce399e` — biosciences-research (competency questions, 72 files)
+**Commits:** `3ce399e` — biosciences-research (competency questions, 72 files) | `13c64b0` — biosciences-research (research docs, 34 files)
 
 ### What Moves
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
 | Competency questions catalog | `docs/competency-questions/` | biosciences-research | `docs/competency-questions/` | ✅ Complete |
-| Research outputs | `docs/research/` | biosciences-research | `docs/research/` | ⬜ Not Started |
+| Research outputs | `docs/research/` + `docs/research-reports/` | biosciences-research | `docs/research/` + `docs/research-reports/` | ✅ Complete |
+| Evaluation docs | `docs/evaluation/` | biosciences-research | `docs/evaluation/` | ✅ Complete |
+| Research scenarios | `docs/scenarios/` | biosciences-research | `docs/scenarios/` | ✅ Complete |
 | Evaluation rubrics | (new) | biosciences-evaluation | `rubrics/` | ⬜ Not Started |
 | Quality metrics definitions | (new) | biosciences-evaluation | `metrics/` | ⬜ Not Started |
-| Reference materials | `reference/` | biosciences-research | `reference/` | ⬜ Not Started |
+| Reference materials | `reference/` | biosciences-research | `reference/` | ⬜ N/A (no reference/ dir in source) |
 
 ### graphiti-fastmcp Migration
 
