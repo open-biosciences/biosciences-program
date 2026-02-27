@@ -15,6 +15,9 @@ Program management and cross-repo coordination for the Open Biosciences platform
 |------|---------|
 | `AGENTS.md` | Agent team definitions (9 agents, repo ownership, responsibilities) |
 | `migration-tracker.md` | Migration wave status from predecessor repos |
+| `docs/adr/accepted/` | 6 ADRs (001-006) — canonical governance decisions |
+| `specs/` | 13 MCP server SpecKit specifications (143 files) |
+| `.specify/` | SpecKit framework config (constitution, templates, scripts) |
 | `.claude/commands/speckit.*.md` | 9 SpecKit SDLC commands (ADR-003 governance) |
 
 ## SpecKit Commands
