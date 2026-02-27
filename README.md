@@ -40,9 +40,10 @@ Eleven repositories under the [open-biosciences](https://github.com/open-bioscie
 
 | Repository | Role | Wave |
 |------------|------|------|
-| [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) | ADRs, schemas, SpecKit governance — root dependency | ✅ Wave 1 |
-| [biosciences-skills](https://github.com/open-biosciences/biosciences-skills) | 7 domain skills, Graphiti + scaffold commands | ✅ Wave 1 |
 | [biosciences-program](https://github.com/open-biosciences/biosciences-program) | Migration tracking, agent team definitions | ✅ Wave 1 |
+| [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) | ADRs, schemas, SpecKit governance — root dependency | ✅ Wave 1 |
+| [biosciences-skills](https://github.com/open-biosciences/biosciences-skills) | 6 domain skills, Graphiti commands | ✅ Wave 1 |
+| [platform-skills](https://github.com/open-biosciences/platform-skills) | Scaffold commands, security review (platform skills) | ✅ Wave 1 |
 | [biosciences-mcp](https://github.com/open-biosciences/biosciences-mcp) | 12 FastMCP servers, 697+ tests, unified gateway | ✅ Wave 2 |
 | [biosciences-memory](https://github.com/open-biosciences/biosciences-memory) | Graphiti + Neo4j knowledge graph layer | ✅ Wave 2 |
 | [biosciences-deepagents](https://github.com/open-biosciences/biosciences-deepagents) | LangGraph supervisor + 7 specialists, React UI | ✅ Wave 3 |
@@ -66,7 +67,8 @@ Eleven active repositories organized into four migration waves, plus four legacy
 ├── 🏛️ FOUNDATION  (Wave 1 ✅ complete)
 │   📋 program          coordination, migration tracking, agent team
 │   🏗️ architecture     ADRs, schemas, SpecKit governance — root provider
-│   ⚡ skills           7 domain skills, Graphiti + scaffold commands
+│   ⚡ skills           6 domain skills, Graphiti commands
+│   🔧 platform-skills  scaffold commands, security review
 │
 ├── 🔌 PLATFORM  (Wave 2 ✅ complete)
 │   🔌 mcp              12 FastMCP servers · 697+ tests · unified gateway
@@ -106,11 +108,11 @@ The platform is MIT-licensed and structured for external contribution. Here are 
 
 **Researcher** — Start with the competency questions catalog in [biosciences-research](https://github.com/open-biosciences/biosciences-research). Each scenario documents the research question, the databases queried, and re-run instructions. You can run any scenario today against the live MCP layer.
 
-**Developer** — The MCP layer is the most accessible contribution surface. Each server is an independent FastMCP wrapper for a public API. If you work with a database not yet covered (KEGG, OMIM, Orphanet), the SpecKit scaffold workflow in [biosciences-skills](https://github.com/open-biosciences/biosciences-skills) generates a compliant server skeleton from a spec. Adding a new MCP server is a self-contained, well-scoped contribution.
+**Developer** — The MCP layer is the most accessible contribution surface. Each server is an independent FastMCP wrapper for a public API. If you work with a database not yet covered (KEGG, OMIM, Orphanet), the scaffold commands in [platform-skills](https://github.com/open-biosciences/platform-skills) generate a compliant server skeleton from a spec. Adding a new MCP server is a self-contained, well-scoped contribution.
 
 **AI/LLM Builder** — The Fuzzy-to-Fact protocol (ADR-001) and SpecKit SDLC (ADR-003) are reusable patterns, not just biosciences artifacts. The architecture documents in [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) explain the design decisions. The 9-agent team topology is a template for how to structure AI-assisted development of complex platforms.
 
-→ SpecKit workflow: [biosciences-skills](https://github.com/open-biosciences/biosciences-skills)
+→ Scaffold commands: [platform-skills](https://github.com/open-biosciences/platform-skills)
 → Architecture ADRs: [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture)
 
 ---

@@ -11,7 +11,7 @@
 
 Repository contains only `.claude/` content — no Python code, no pyproject.toml. This is correct; the repo is a skills/commands provider.
 
-**7 domain skills in `.claude/skills/`:**
+**6 domain skills in `.claude/skills/` (security-review moved to platform-skills):**
 
 | Skill | Has SKILL.md | Extra files |
 |-------|-------------|-------------|

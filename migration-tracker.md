@@ -31,19 +31,20 @@ Migration of predecessor repos (`lifesciences-research`, `lifesciences-deepagent
 | ADR-006 v1.0 (Single Writer) | `docs/adr/accepted/adr-006-v1.0.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
 | Platform Engineering Rationale | `docs/platform-engineering-rationale.md` | biosciences-architecture | `docs/` | ✅ Complete |
 | 6 Domain Skills | `.claude/skills/lifesciences-*` | biosciences-skills | `.claude/skills/` | ✅ Complete |
-| 15 SpecKit Commands | `.claude/commands/speckit.*` | biosciences-skills | `.claude/commands/` | ✅ Complete |
-| Scaffold Skills | `.claude/commands/scaffold-*` | biosciences-skills | `.claude/commands/` | ✅ Complete |
-| Graphiti Skills | `.claude/commands/graphiti-*` | biosciences-skills | `.claude/commands/` | ✅ Complete |
-| specs/ (13 MCP server specs) | `lifesciences-research/specs/` | biosciences-architecture | `specs/` | ✅ Complete |
-| .specify/ (SpecKit config) | `lifesciences-research/.specify/` | biosciences-architecture | `.specify/` | ✅ Complete |
-| speckit-standard-prompt-v2.md | `lifesciences-research/docs/` | biosciences-architecture | `docs/` | ✅ Complete |
-| speckit-standard-prompt.md (v1 legacy) | `lifesciences-research/docs/` | biosciences-architecture | `docs/` | ✅ Complete |
-| speckit-scaffold-process-timeline-v2.md | `lifesciences-research/docs/` | biosciences-architecture | `docs/` | ✅ Complete |
+| 9 SpecKit Commands | `.claude/commands/speckit.*` | biosciences-program | `.claude/commands/` | ✅ Complete |
+| Scaffold Skills | `.claude/commands/scaffold-*` | platform-skills | `.claude/commands/` | ✅ Complete |
+| Graphiti Skills | `.claude/commands/graphiti-*` | `~/.claude/skills/` (global) | Global install | ✅ Complete |
+| Security Review Skill | `.claude/skills/security-review/` | platform-skills | `.claude/skills/security-review/` | ✅ Complete |
+| specs/ (13 MCP server specs) | `lifesciences-research/specs/` | biosciences-program | `specs/` | ✅ Complete |
+| .specify/ (SpecKit config) | `lifesciences-research/.specify/` | biosciences-program | `.specify/` | ✅ Complete |
+| speckit-standard-prompt-v2.md | `lifesciences-research/docs/` | biosciences-program | `docs/` | ✅ Complete |
+| speckit-standard-prompt.md (v1 legacy) | `lifesciences-research/docs/` | biosciences-program | `docs/` | ✅ Complete |
+| speckit-scaffold-process-timeline-v2.md | `lifesciences-research/docs/` | biosciences-program | `docs/` | ✅ Complete |
 
 ### Acceptance Criteria
 - [x] All 6 ADRs present in `biosciences-architecture/docs/adr/accepted/`
 - [x] All 6 domain skills present in `biosciences-skills/.claude/skills/`
-- [x] All SpecKit commands present in `biosciences-skills/.claude/commands/`
+- [x] All SpecKit commands present in `biosciences-program/.claude/commands/`
 - [x] Platform engineering rationale doc migrated
 - [x] No broken cross-references between migrated docs
 

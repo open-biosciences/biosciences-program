@@ -23,7 +23,7 @@
 
 These decisions were made during migration and must be reflected accurately in all READMEs:
 
-1. **SpecKit artifacts live in `biosciences-architecture`, NOT `biosciences-research`** (AGE-183)
+1. **SpecKit artifacts live in `biosciences-program`, NOT `biosciences-research` or `biosciences-architecture`** (AGE-183, then moved to program)
    - `specs/` (13 MCP server spec dirs, 143 files)
    - `.specify/` (SpecKit config: constitution, templates, scripts — 11 files)
    - `docs/speckit-standard-prompt-v2.md`, `docs/speckit-standard-prompt.md`, `docs/speckit-scaffold-process-timeline-v2.md`
@@ -67,12 +67,20 @@ These decisions were made during migration and must be reflected accurately in a
 - **Wave:** 1 ✅ Complete
 - **Owner:** Quality & Skills Engineer (Agent 8)
 - **Content:**
-  - **7 domain skills**: lifesciences-clinical, lifesciences-crispr, lifesciences-genomics, lifesciences-graph-builder, lifesciences-pharmacology, lifesciences-proteomics, security-review
-  - **6 commands** in `.claude/commands/`:
-    - 4 Graphiti commands: graphiti-health, graphiti-verify, graphiti-aura-stats, graphiti-docker-stats
-    - 2 scaffold commands: scaffold-fastmcp, scaffold-fastmcp-v2
-  - **Note:** The 9 SpecKit commands (speckit.*) live in `biosciences-architecture/.claude/commands/` — they are governance artifacts, not skills-layer tools
+  - **6 domain skills**: lifesciences-clinical, lifesciences-crispr, lifesciences-genomics, lifesciences-graph-builder, lifesciences-pharmacology, lifesciences-proteomics
+  - **Note:** Scaffold commands and security-review skill moved to `platform-skills` (platform-aligned, developer-facing)
+  - **Note:** The 9 SpecKit commands (speckit.*) live in `biosciences-program/.claude/commands/` — they are governance artifacts owned by Program Director
+  - **Note:** The 4 Graphiti commands are installed globally in `~/.claude/skills/`
 - **Upstream:** biosciences-architecture (ADR-002, ADR-003)
+
+### platform-skills
+- **Wave:** 1 ✅ Complete
+- **Owner:** Quality & Skills Engineer (Agent 8)
+- **Content:**
+  - **2 scaffold commands**: scaffold-fastmcp, scaffold-fastmcp-v2 (in `.claude/commands/`)
+  - **1 platform skill**: security-review (in `.claude/skills/`)
+- **Rationale:** Platform-aligned developer skills split from domain-aligned research skills per Team Topologies
+- **Upstream:** biosciences-architecture (ADR-001, ADR-002, ADR-004)
 
 ### biosciences-mcp
 - **Wave:** 2 ✅ Complete

@@ -15,6 +15,11 @@ Program management and cross-repo coordination for the Open Biosciences platform
 |------|---------|
 | `AGENTS.md` | Agent team definitions (9 agents, repo ownership, responsibilities) |
 | `migration-tracker.md` | Migration wave status from predecessor repos |
+| `.claude/commands/speckit.*.md` | 9 SpecKit SDLC commands (ADR-003 governance) |
+
+## SpecKit Commands
+
+The 9 SpecKit commands live in `.claude/commands/` in this repo. They are governance artifacts owned by the Program Director, available in any Claude Code session opened here or at the workspace root.
 
 ## Responsibilities
 
