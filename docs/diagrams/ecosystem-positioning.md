@@ -54,7 +54,7 @@ flowchart TD
     GH["GitHub open-biosciences<br/>12 MIT-licensed repos"]
     PS["platform-skills<br/>Scaffold commands"]
     SC["/scaffold-fastmcp<br/>Generate compliant<br/>MCP server skeleton"]
-    ADR["biosciences-architecture<br/>ADRs + Agentic Biolink schema"]
+    ADR["biosciences-program<br/>ADRs + Agentic Biolink schema"]
     SK["biosciences-skills<br/>6 domain skills library"]
     NEW["New MCP Server<br/>Follows Golden Path patterns<br/>Fuzzy-to-Fact compliant"]
     PR["Pull Request<br/>Security review skill<br/>697+ test patterns"]

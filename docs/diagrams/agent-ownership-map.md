@@ -33,6 +33,7 @@ flowchart LR
     end
 
     a1 --> r_prog
+    a2 --> r_prog
     a2 --> r_arch
     a3 --> r_mcp
     a4 --> r_mem
@@ -74,7 +75,7 @@ flowchart LR
 | # | Agent | Repos | Key Responsibility |
 |---|-------|-------|-------------------|
 | 1 | Program Director | biosciences-program | Cross-repo coordination, migration tracking |
-| 2 | Platform Architect | biosciences-architecture | ADR governance, schema stewardship, Fuzzy-to-Fact protocol |
+| 2 | Platform Architect | biosciences-architecture, biosciences-program | ADR authoring (via program repo), schema stewardship, Fuzzy-to-Fact protocol |
 | 3 | MCP Platform Engineer | biosciences-mcp | 12 FastMCP servers, unified gateway, 697+ tests |
 | 4 | Memory Engineer | biosciences-memory | Graphiti/Neo4j knowledge graph, dual-environment management |
 | 5 | Deep Agents Engineer | biosciences-deepagents | LangGraph supervisor + 7 specialist subagents, React UI |

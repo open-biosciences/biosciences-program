@@ -6,9 +6,9 @@
 ```mermaid
 flowchart TD
     subgraph wave1["Wave 1: Foundation"]
-        arch["biosciences-architecture<br/>(ADRs, schemas)"]
+        program["biosciences-program<br/>(ADRs, specs, SpecKit,<br/>coordination)"]
+        arch["biosciences-architecture<br/>(Repository Analyzer Framework)"]
         skills["biosciences-skills<br/>(6 domain skills)"]
-        program["biosciences-program<br/>(coordination)"]
         platskills["platform-skills<br/>(scaffold, security)"]
     end
 
@@ -29,17 +29,20 @@ flowchart TD
         workspace["biosciences-workspace-template<br/>(bootstrap scripts)"]
     end
 
-    arch -->|schemas| mcp
+    program -->|ADRs, specs| mcp
+    program -->|ADRs, specs| memory
+    program -->|ADRs, specs| deep
+    program -->|ADRs, specs| temporal
     mcp -->|MCP tools| deep
     mcp -->|MCP tools| temporal
     mcp -->|MCP tools| research
     memory -->|graph persist| deep
     memory -->|graph persist| research
 
-    eval -.->|reads from all| arch
-    eval -.->|reads from all| mcp
-    eval -.->|reads from all| deep
-    eval -.->|reads from all| temporal
+    eval -.->|quality gates| program
+    eval -.->|quality gates| mcp
+    eval -.->|quality gates| deep
+    eval -.->|quality gates| temporal
 
     style wave1 fill:#b2f2bb,stroke:#22c55e,color:#1e1e1e
     style wave2 fill:#a5d8ff,stroke:#4a9eed,color:#1e1e1e
@@ -64,8 +67,8 @@ flowchart TD
 
 | Rule | Description |
 |------|-------------|
-| **Pure providers** | `biosciences-architecture` and `biosciences-skills` have no upstream dependencies |
-| **Schema dependency** | `biosciences-mcp` depends on `biosciences-architecture` for Pydantic schemas and ADR compliance |
+| **Pure providers** | `biosciences-program` and `biosciences-skills` have no upstream dependencies |
+| **Governance root** | `biosciences-program` provides ADRs, specs, and SpecKit commands to all repos |
 | **Tool consumers** | `biosciences-deepagents` and `biosciences-temporal` consume MCP tools via HTTP transport |
 | **Graph persistence** | `biosciences-memory` is consumed by `biosciences-research` and `biosciences-deepagents` (PERSIST phase) |
 | **Quality observer** | `biosciences-evaluation` reads from all repos but no repo depends on it |
