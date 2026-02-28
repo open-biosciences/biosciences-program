@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doxorubicin-NF1 Toxicity Knowledge Graph</title>
+    <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #1a1a2e; color: #eee; }
+        #container { display: flex; height: 100vh; }
+        #cy { flex: 1; background: #16213e; }
+        #sidebar { width: 320px; padding: 20px; background: #0f3460; overflow-y: auto; }
+        h1 { font-size: 1.1rem; margin-bottom: 8px; color: #e94560; }
+        .subtitle { font-size: 0.75rem; color: #94a3b8; margin-bottom: 15px; line-height: 1.4; }
+        h2 { font-size: 0.9rem; margin: 15px 0 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .legend-item { display: flex; align-items: center; margin: 8px 0; font-size: 0.85rem; }
+        .legend-color { width: 16px; height: 16px; border-radius: 50%; margin-right: 10px; border: 2px solid rgba(255,255,255,0.3); }
+        #info { background: #1a1a2e; border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 0.8rem; line-height: 1.5; max-height: 300px; overflow-y: auto; }
+        #info .info-title { color: #e94560; font-weight: bold; }
+        #info .meta-key { color: #94a3b8; }
+        #info .meta-val { color: #cbd5e1; }
+        button { width: 100%; padding: 10px; margin-top: 10px; background: #e94560; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        button:hover { background: #c73e54; }
+        .controls { margin-top: 15px; }
+        select { width: 100%; padding: 8px; background: #1a1a2e; color: #eee; border: 1px solid #334155; border-radius: 4px; }
+        .stats { font-size: 0.75rem; color: #64748b; margin-top: 10px; }
+        .edge-legend { margin-top: 5px; }
+        .edge-legend-item { display: flex; align-items: center; margin: 5px 0; font-size: 0.8rem; }
+        .edge-legend-line { width: 24px; height: 3px; margin-right: 10px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="cy"></div>
+        <div id="sidebar">
+            <h1>Doxorubicin-NF1 Toxicity</h1>
+            <div class="subtitle">What genes or pathways minimize Doxorubicin toxicity while preserving anti-tumor efficacy for NF1?</div>
+            <div class="stats" id="stats"></div>
+
+            <h2>Node Types</h2>
+            <div id="legend"></div>
+
+            <h2>Edge Types</h2>
+            <div id="edge-legend" class="edge-legend"></div>
+
+            <h2>Selected Element</h2>
+            <div id="info">Click a node or edge to see details</div>
+
+            <div class="controls">
+                <h2>Layout</h2>
+                <select id="layout-select">
+                    <option value="cose">Force-Directed (COSE)</option>
+                    <option value="circle">Circle</option>
+                    <option value="grid">Grid</option>
+                    <option value="breadthfirst">Hierarchical</option>
+                    <option value="concentric">Concentric</option>
+                </select>
+            </div>
+
+            <button onclick="exportPNG()">Export PNG</button>
+            <button onclick="cy.fit()" style="background: #334155;">Fit to View</button>
+        </div>
+    </div>
+
+    <script>
+    const graphData = {
+      nodes: [
+        { id: "HGNC:7765", label: "NF1", type: "Gene", metadata: { symbol: "NF1", name: "neurofibromin 1", location: "17q11.2", role: "Primary anchor gene. NF1 loss leads to constitutive Ras/MAPK activation driving tumor growth." } },
+        { id: "HGNC:11989", label: "TOP2A", type: "Gene", metadata: { symbol: "TOP2A", name: "DNA topoisomerase II alpha", location: "17q21.2", role: "Primary doxorubicin anti-tumor target. Inhibition causes DNA double-strand breaks in tumor cells." } },
+        { id: "HGNC:11990", label: "TOP2B", type: "Gene", metadata: { symbol: "TOP2B", name: "DNA topoisomerase II beta", location: "3p24.2", role: "Key cardiotoxicity mediator. Expressed in cardiomyocytes. Doxorubicin-TOP2B poisoning causes cardiotoxicity." } },
+        { id: "HGNC:7782", label: "NFE2L2", type: "Gene", metadata: { symbol: "NFE2L2", aliases: "NRF2", location: "2q31.2", role: "Master regulator of antioxidant defense. Activates SOD2, NQO1, CAT, HMOX1 to detoxify ROS." } },
+        { id: "HGNC:11180", label: "SOD2", type: "Gene", metadata: { symbol: "SOD2", aliases: "MnSOD", location: "6q25.3", role: "Mitochondrial superoxide dismutase. Detoxifies doxorubicin-induced mitochondrial ROS." } },
+        { id: "HGNC:2874", label: "NQO1", type: "Gene", metadata: { symbol: "NQO1", aliases: "DT-diaphorase", location: "16q22.1", role: "Two-electron reductase. Reduces doxorubicin (anthracycline quinone) without ROS generation." } },
+        { id: "HGNC:1516", label: "CAT", type: "Gene", metadata: { symbol: "CAT", name: "catalase", location: "11p13", role: "Decomposes hydrogen peroxide. Part of NFE2L2-regulated antioxidant defense." } },
+        { id: "HGNC:5013", label: "HMOX1", type: "Gene", metadata: { symbol: "HMOX1", aliases: "HO-1", location: "22q12.3", role: "NFE2L2-regulated cytoprotective enzyme. Degrades free heme from oxidative damage." } },
+        { id: "HGNC:6407", label: "KRAS", type: "Gene", metadata: { symbol: "KRAS", location: "12p12.1", role: "Direct substrate of NF1 RasGAP. NF1 loss leads to constitutive KRAS-GTP, hyperactivating MAPK." } },
+        { id: "HGNC:1097", label: "BRAF", type: "Gene", metadata: { symbol: "BRAF", location: "7q34", role: "KRAS effector in MAPK cascade. Phosphorylates MEK1/2." } },
+        { id: "HGNC:6840", label: "MAP2K1", type: "Gene", metadata: { symbol: "MAP2K1", aliases: "MEK1", location: "15q22.31", role: "Selumetinib target. MEK1 inhibition blocks hyperactivated Ras/MAPK pathway." } },
+        { id: "HGNC:11998", label: "TP53", type: "Gene", metadata: { symbol: "TP53", location: "17p13.1", role: "Doxorubicin activates TP53-mediated apoptosis in tumor cells via DNA damage." } },
+        { id: "HGNC:40", label: "ABCB1", type: "Gene", metadata: { symbol: "ABCB1", aliases: "MDR1, P-gp", location: "7q21.12", role: "P-glycoprotein drug efflux pump. Mediates doxorubicin resistance." } },
+        { id: "CHEMBL:53463", label: "Doxorubicin", type: "Compound", metadata: { chembl: "CHEMBL:53463", mechanism: "DNA topoisomerase II alpha inhibitor", phase: "4", aliases: "Adriamycin" } },
+        { id: "CHEMBL:1738", label: "Dexrazoxane", type: "Compound", metadata: { chembl: "CHEMBL:1738", mechanism: "TOP2B depletion in cardiomyocytes", phase: "4", aliases: "ICRF-187, Cardioxane", role: "Only FDA-approved cardioprotectant against doxorubicin." } },
+        { id: "CHEMBL:1614701", label: "Selumetinib", type: "Compound", metadata: { chembl: "CHEMBL:1614701", mechanism: "MEK1/2 inhibitor", phase: "4", aliases: "AZD6244", role: "FDA-approved for NF1-associated plexiform neurofibromas." } },
+        { id: "CHEMBL:4303525", label: "Omaveloxolone", type: "Compound", metadata: { chembl: "CHEMBL:4303525", mechanism: "NRF2 activator", phase: "4", role: "Upregulates antioxidant defenses against doxorubicin oxidative stress." } },
+        { id: "CHEMBL:1762621", label: "Bardoxolone methyl", type: "Compound", metadata: { chembl: "CHEMBL:1762621", mechanism: "Keap1/Nrf2 inhibitor", phase: "3", role: "Activates NRF2 antioxidant response by disrupting KEAP1-NRF2." } },
+        { id: "MONDO:0018975", label: "Neurofibromatosis type 1", type: "Disease", metadata: { mondo: "MONDO:0018975", association_score: "0.885" } },
+        { id: "WP:WP2735", label: "RAF/MAP kinase cascade", type: "Pathway", metadata: { organism: "Homo sapiens", role: "Core pathway deregulated by NF1 loss." } },
+        { id: "WP:WP382", label: "MAPK signaling", type: "Pathway", metadata: { organism: "Homo sapiens" } },
+        { id: "WP:WP4223", label: "Ras signaling", type: "Pathway", metadata: { organism: "Homo sapiens", role: "NF1 acts as negative regulator." } },
+        { id: "WP:WP408", label: "Oxidative stress response", type: "Pathway", metadata: { organism: "Homo sapiens", role: "Primary toxicity mitigation pathway. Contains NFE2L2, SOD2, NQO1, CAT, HMOX1." } },
+        { id: "WP:WP2884", label: "NRF2 pathway", type: "Pathway", metadata: { organism: "Homo sapiens" } },
+        { id: "WP:WP4357", label: "NRF2-ARE regulation", type: "Pathway", metadata: { organism: "Homo sapiens" } },
+        { id: "NCT:00304083", label: "Doxorubicin combo for NF1-MPNST", type: "ClinicalTrial", metadata: { status: "COMPLETED", interventions: "doxorubicin, etoposide, ifosfamide", conditions: "NF1, Sarcoma" } },
+        { id: "NCT:03930680", label: "Dexrazoxane TOP2B degradation", type: "ClinicalTrial", metadata: { status: "COMPLETED", outcome: "95% reduction in TOP2B from baseline" } },
+        { id: "NCT:06220032", label: "ANTICIPATE: Dexrazoxane in DLBCL", type: "ClinicalTrial", metadata: { status: "RECRUITING", interventions: "Dexrazoxane, Doxorubicin, Rituximab" } },
+        { id: "NCT:06155331", label: "Fenofibrate for doxorubicin cardiotoxicity", type: "ClinicalTrial", metadata: { status: "COMPLETED", outcome: "Changes in ejection fraction" } },
+        { id: "NCT:02096588", label: "Simvastatin for anthracycline cardiotoxicity", type: "ClinicalTrial", metadata: { status: "TERMINATED", interventions: "Simvastatin, Doxorubicin/cyclophosphamide" } },
+        { id: "NCT:01362803", label: "Selumetinib for NF1 plexiform neurofibromas", type: "ClinicalTrial", metadata: { status: "ACTIVE_NOT_RECRUITING", sponsor: "NCI" } }
+      ],
+      edges: [
+        { source: "HGNC:7765", target: "HGNC:6407", label: "REGULATES", metadata: { direction: "negative", mechanism: "NF1 stimulates GTPase activity of KRAS (GTP \u2192 GDP)", evidence: "STRING 0.996" } },
+        { source: "HGNC:6407", target: "HGNC:1097", label: "ACTIVATES", metadata: { mechanism: "KRAS-GTP activates BRAF", evidence: "STRING 0.999" } },
+        { source: "HGNC:1097", target: "HGNC:6840", label: "ACTIVATES", metadata: { mechanism: "BRAF phosphorylates MEK1", evidence: "WikiPathways WP2735" } },
+        { source: "CHEMBL:53463", target: "HGNC:11989", label: "INHIBITOR", metadata: { effect: "anti-tumor", phase: "4" } },
+        { source: "CHEMBL:53463", target: "HGNC:11990", label: "POISONS", metadata: { effect: "cardiotoxicity", mechanism: "Off-target TOP2B poisoning in cardiomyocytes" } },
+        { source: "CHEMBL:1738", target: "HGNC:11990", label: "DEPLETES", metadata: { effect: "cardioprotection", mechanism: "Proteasomal degradation of TOP2B", evidence: "NCT:03930680" } },
+        { source: "CHEMBL:1738", target: "HGNC:11989", label: "INHIBITOR", metadata: { mechanism: "Catalytic inhibition (not poisoning)" } },
+        { source: "CHEMBL:1614701", target: "HGNC:6840", label: "INHIBITOR", metadata: { effect: "anti-tumor for NF1", phase: "4" } },
+        { source: "CHEMBL:4303525", target: "HGNC:7782", label: "ACTIVATOR", metadata: { effect: "antioxidant defense upregulation", phase: "4" } },
+        { source: "CHEMBL:1762621", target: "HGNC:7782", label: "ACTIVATOR", metadata: { effect: "antioxidant defense upregulation", phase: "3" } },
+        { source: "HGNC:7782", target: "HGNC:2874", label: "TRANSCRIBES", metadata: { mechanism: "NRF2 activates NQO1 via ARE" } },
+        { source: "HGNC:7782", target: "HGNC:11180", label: "TRANSCRIBES", metadata: { mechanism: "NRF2 activates SOD2" } },
+        { source: "HGNC:7782", target: "HGNC:1516", label: "TRANSCRIBES", metadata: { mechanism: "NRF2 activates CAT" } },
+        { source: "HGNC:7782", target: "HGNC:5013", label: "TRANSCRIBES", metadata: { mechanism: "NRF2 activates HMOX1" } },
+        { source: "HGNC:7765", target: "MONDO:0018975", label: "ASSOCIATED_WITH", metadata: { score: "0.885" } },
+        { source: "HGNC:7765", target: "WP:WP2735", label: "MEMBER_OF" },
+        { source: "HGNC:7765", target: "WP:WP382", label: "MEMBER_OF" },
+        { source: "HGNC:7765", target: "WP:WP4223", label: "MEMBER_OF" },
+        { source: "HGNC:7782", target: "WP:WP408", label: "MEMBER_OF" },
+        { source: "HGNC:7782", target: "WP:WP2884", label: "MEMBER_OF" },
+        { source: "HGNC:7782", target: "WP:WP4357", label: "MEMBER_OF" },
+        { source: "HGNC:6407", target: "HGNC:11998", label: "INTERACTS", metadata: { score: "0.949" } },
+        { source: "CHEMBL:53463", target: "HGNC:40", label: "SUBSTRATE_OF", metadata: { mechanism: "ABCB1/P-gp efflux pump", effect: "Drug resistance" } },
+        { source: "CHEMBL:53463", target: "NCT:00304083", label: "TESTED_IN" },
+        { source: "CHEMBL:1738", target: "NCT:03930680", label: "TESTED_IN" },
+        { source: "CHEMBL:1738", target: "NCT:06220032", label: "TESTED_IN" },
+        { source: "CHEMBL:53463", target: "NCT:06155331", label: "TESTED_IN" },
+        { source: "CHEMBL:53463", target: "NCT:02096588", label: "TESTED_IN" },
+        { source: "CHEMBL:1614701", target: "NCT:01362803", label: "TESTED_IN" }
+      ]
+    };
+
+    // Node type colors
+    const typeColors = {
+        'Gene': '#4CAF50',
+        'Protein': '#009688',
+        'Compound': '#2196F3',
+        'Drug': '#2196F3',
+        'SmallMolecule': '#2196F3',
+        'Disease': '#F44336',
+        'Pathway': '#9C27B0',
+        'ClinicalTrial': '#FF9800',
+        'Publication': '#607D8B',
+        'default': '#78909C'
+    };
+
+    // Edge predicate colors
+    const predicateColors = {
+        'REGULATES': '#FF5722',
+        'ACTIVATES': '#4CAF50',
+        'ACTIVATOR': '#4CAF50',
+        'INHIBITOR': '#e94560',
+        'POISONS': '#F44336',
+        'DEPLETES': '#FF9800',
+        'TRANSCRIBES': '#00BCD4',
+        'ASSOCIATED_WITH': '#FFEB3B',
+        'MEMBER_OF': '#9C27B0',
+        'INTERACTS': '#78909C',
+        'SUBSTRATE_OF': '#795548',
+        'TESTED_IN': '#607D8B',
+        'default': '#64748b'
+    };
+
+    function getNodeColor(type) {
+        return typeColors[type] || typeColors['default'];
+    }
+
+    function getEdgeColor(predicate) {
+        return predicateColors[predicate] || predicateColors['default'];
+    }
+
+    function getNodeSize(type) {
+        var sizes = { 'Gene': 40, 'Compound': 50, 'Disease': 45, 'Pathway': 35, 'ClinicalTrial': 32 };
+        return sizes[type] || 40;
+    }
+
+    // Transform data for Cytoscape
+    var elements = {
+        nodes: graphData.nodes.map(function(n) {
+            return {
+                data: {
+                    id: n.id,
+                    label: n.label,
+                    type: n.type,
+                    color: getNodeColor(n.type),
+                    metadata: n.metadata || {},
+                    nodeSize: getNodeSize(n.type)
+                }
+            };
+        }),
+        edges: graphData.edges.map(function(e, i) {
+            return {
+                data: {
+                    id: 'e' + i,
+                    source: e.source,
+                    target: e.target,
+                    label: e.label,
+                    color: getEdgeColor(e.label),
+                    metadata: e.metadata || {}
+                }
+            };
+        })
+    };
+
+    // Initialize Cytoscape
+    var cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: elements,
+        style: [
+            {
+                selector: 'node',
+                style: {
+                    'background-color': 'data(color)',
+                    'label': 'data(label)',
+                    'color': '#fff',
+                    'text-valign': 'bottom',
+                    'text-margin-y': 8,
+                    'font-size': '11px',
+                    'font-weight': '600',
+                    'text-outline-color': '#16213e',
+                    'text-outline-width': 2,
+                    'width': 'data(nodeSize)',
+                    'height': 'data(nodeSize)',
+                    'border-width': 3,
+                    'border-color': '#fff',
+                    'border-opacity': 0.3
+                }
+            },
+            {
+                selector: 'node:selected',
+                style: {
+                    'border-width': 4,
+                    'border-color': '#e94560',
+                    'border-opacity': 1
+                }
+            },
+            {
+                selector: 'edge',
+                style: {
+                    'width': 2,
+                    'line-color': 'data(color)',
+                    'target-arrow-color': 'data(color)',
+                    'target-arrow-shape': 'triangle',
+                    'curve-style': 'bezier',
+                    'label': 'data(label)',
+                    'font-size': '9px',
+                    'color': '#94a3b8',
+                    'text-rotation': 'autorotate',
+                    'text-margin-y': -10,
+                    'text-outline-color': '#16213e',
+                    'text-outline-width': 1.5,
+                    'opacity': 0.8
+                }
+            },
+            {
+                selector: 'edge:selected',
+                style: {
+                    'width': 4,
+                    'line-color': '#e94560',
+                    'target-arrow-color': '#e94560',
+                    'opacity': 1
+                }
+            }
+        ],
+        layout: {
+            name: 'cose',
+            animate: true,
+            animationDuration: 800,
+            nodeRepulsion: function(){ return 8000; },
+            idealEdgeLength: function(){ return 120; },
+            gravity: 0.25,
+            numIter: 1000,
+            padding: 50
+        }
+    });
+
+    // Resize nodes by degree after layout
+    cy.ready(function() {
+        cy.nodes().forEach(function(node) {
+            var degree = node.degree();
+            var baseSize = node.data('nodeSize');
+            var scaledSize = baseSize + (degree * 3);
+            node.style('width', scaledSize);
+            node.style('height', scaledSize);
+        });
+    });
+
+    // Build node legend using DOM methods (safe, no innerHTML)
+    var usedTypes = [];
+    graphData.nodes.forEach(function(n) {
+        if (usedTypes.indexOf(n.type) === -1) usedTypes.push(n.type);
+    });
+    var legendDiv = document.getElementById('legend');
+    usedTypes.forEach(function(type) {
+        var count = graphData.nodes.filter(function(n) { return n.type === type; }).length;
+        var item = document.createElement('div');
+        item.className = 'legend-item';
+        var colorDot = document.createElement('div');
+        colorDot.className = 'legend-color';
+        colorDot.style.background = getNodeColor(type);
+        var text = document.createTextNode(type + ' (' + count + ')');
+        item.appendChild(colorDot);
+        item.appendChild(text);
+        legendDiv.appendChild(item);
+    });
+
+    // Build edge legend using DOM methods (safe)
+    var usedPredicates = [];
+    graphData.edges.forEach(function(e) {
+        if (usedPredicates.indexOf(e.label) === -1) usedPredicates.push(e.label);
+    });
+    var edgeLegendDiv = document.getElementById('edge-legend');
+    usedPredicates.forEach(function(pred) {
+        var count = graphData.edges.filter(function(e) { return e.label === pred; }).length;
+        var item = document.createElement('div');
+        item.className = 'edge-legend-item';
+        var colorLine = document.createElement('div');
+        colorLine.className = 'edge-legend-line';
+        colorLine.style.background = getEdgeColor(pred);
+        var text = document.createTextNode(pred + ' (' + count + ')');
+        item.appendChild(colorLine);
+        item.appendChild(text);
+        edgeLegendDiv.appendChild(item);
+    });
+
+    // Stats
+    document.getElementById('stats').textContent =
+        graphData.nodes.length + ' nodes \u2022 ' + graphData.edges.length + ' edges \u2022 Fuzzy-to-Fact v2 protocol';
+
+    // Helper: safely set info panel content using DOM methods
+    function setInfoContent(lines) {
+        var info = document.getElementById('info');
+        while (info.firstChild) info.removeChild(info.firstChild);
+        lines.forEach(function(line, i) {
+            if (line.bold) {
+                var strong = document.createElement('strong');
+                strong.className = 'info-title';
+                strong.textContent = line.text;
+                info.appendChild(strong);
+            } else if (line.key) {
+                var keySpan = document.createElement('span');
+                keySpan.className = 'meta-key';
+                keySpan.textContent = line.key + ': ';
+                var valSpan = document.createElement('span');
+                valSpan.className = 'meta-val';
+                valSpan.textContent = line.val;
+                info.appendChild(keySpan);
+                info.appendChild(valSpan);
+            }
+            if (i < lines.length - 1) info.appendChild(document.createElement('br'));
+        });
+    }
+
+    // Node click handler
+    cy.on('tap', 'node', function(evt) {
+        var node = evt.target.data();
+        var lines = [
+            { bold: true, text: node.label },
+            { key: 'ID', val: node.id },
+            { key: 'Type', val: node.type },
+            { key: 'Degree', val: String(evt.target.degree()) }
+        ];
+        if (node.metadata) {
+            Object.keys(node.metadata).forEach(function(key) {
+                lines.push({ key: key, val: String(node.metadata[key]) });
+            });
+        }
+        setInfoContent(lines);
+    });
+
+    // Edge click handler
+    cy.on('tap', 'edge', function(evt) {
+        var edge = evt.target.data();
+        var srcLabel = cy.getElementById(edge.source).data('label');
+        var tgtLabel = cy.getElementById(edge.target).data('label');
+        var lines = [
+            { bold: true, text: srcLabel + ' \u2192 ' + tgtLabel },
+            { key: 'Predicate', val: edge.label }
+        ];
+        if (edge.metadata) {
+            Object.keys(edge.metadata).forEach(function(key) {
+                lines.push({ key: key, val: String(edge.metadata[key]) });
+            });
+        }
+        setInfoContent(lines);
+    });
+
+    // Background click clears selection
+    cy.on('tap', function(evt) {
+        if (evt.target === cy) {
+            document.getElementById('info').textContent = 'Click a node or edge to see details';
+        }
+    });
+
+    // Layout change handler
+    document.getElementById('layout-select').addEventListener('change', function(e) {
+        var layoutOpts = { name: e.target.value, animate: true, animationDuration: 500 };
+        if (e.target.value === 'cose') {
+            layoutOpts.nodeRepulsion = function(){ return 8000; };
+            layoutOpts.idealEdgeLength = function(){ return 120; };
+            layoutOpts.gravity = 0.25;
+        }
+        if (e.target.value === 'breadthfirst') {
+            layoutOpts.roots = '#HGNC\\:7765, #CHEMBL\\:53463';
+            layoutOpts.spacingFactor = 1.2;
+        }
+        if (e.target.value === 'concentric') {
+            layoutOpts.concentric = function(node) { return node.degree(); };
+            layoutOpts.levelWidth = function() { return 2; };
+        }
+        cy.layout(layoutOpts).run();
+    });
+
+    // Export PNG
+    function exportPNG() {
+        var png = cy.png({ output: 'blob', bg: '#16213e', scale: 2 });
+        var url = URL.createObjectURL(png);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'doxorubicin-nf1-toxicity-graph.png';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    </script>
+</body>
+</html>
