@@ -181,30 +181,32 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 | Item | Source | Target Repo | Target Path | Status |
 |------|--------|-------------|-------------|--------|
-| FastMCP server factory (`server.py`) | `graphiti-fastmcp/src/server.py` | biosciences-memory | `src/biosciences_memory/server.py` | ⬜ Not Started |
-| Queue service (`queue_service.py`) | `graphiti-fastmcp/src/services/` | biosciences-memory | `src/biosciences_memory/services/` | ⬜ Not Started |
-| Config schema (`schema.py`) | `graphiti-fastmcp/src/config/` | biosciences-memory | `src/biosciences_memory/config/` | ⬜ Not Started |
-| Provider factories (`factories.py`) | `graphiti-fastmcp/src/services/` | biosciences-memory | `src/biosciences_memory/services/` | ⬜ Not Started |
-| Response models | `graphiti-fastmcp/src/models/` | biosciences-memory | `src/biosciences_memory/models/` | ⬜ Not Started |
-| Test suite (unit + integration) | `graphiti-fastmcp/tests/` | biosciences-memory | `tests/` | ⬜ Not Started |
-| pyproject.toml | (new) | biosciences-memory | `pyproject.toml` | ⬜ Not Started |
+| FastMCP server factory (`server.py`) | `graphiti-fastmcp/src/server.py` | biosciences-memory | `src/biosciences_memory/server.py` | ✅ Complete |
+| Queue service (`queue_service.py`) | `graphiti-fastmcp/src/services/` | biosciences-memory | `src/biosciences_memory/services/` | ✅ Complete |
+| Config schema (`schema.py`) | `graphiti-fastmcp/src/config/` | biosciences-memory | `src/biosciences_memory/config/` | ✅ Complete |
+| Provider factories (`factories.py`) | `graphiti-fastmcp/src/services/` | biosciences-memory | `src/biosciences_memory/services/` | ✅ Complete |
+| Response models | `graphiti-fastmcp/src/models/` | biosciences-memory | `src/biosciences_memory/models/` | ✅ Complete |
+| Test suite (unit + integration) | `graphiti-fastmcp/tests/` | biosciences-memory | `tests/` | ✅ Complete |
+| pyproject.toml | (new) | biosciences-memory | `pyproject.toml` | ✅ Complete |
 
-**Curation steps:**
-- Align to hatchling build backend
-- Apply project ruff config
-- Apply pytest markers (`unit`/`integration`/`e2e`)
-- Pin graphiti-core version consistent with rest of platform
-- Rename `graphiti_fastmcp` → `biosciences_memory` package internals
-- Add biosciences-specific entity schemas (Gene, Protein, Drug, Disease, Pathway)
+**Migration completed 2026-02-27** — 14 entity types, 9 MCP tools, 26 tests passing.
+
+**Curation steps (all complete):**
+- ~~Align to hatchling build backend~~
+- ~~Apply project ruff config~~
+- ~~Apply pytest markers (`unit`/`integration`/`e2e`)~~
+- ~~Pin graphiti-core version consistent with rest of platform~~
+- ~~Rename `graphiti_fastmcp` → `biosciences_memory` package internals~~
+- ~~Add biosciences-specific entity schemas (Gene, Protein, Drug, Disease, Pathway)~~
 
 ### Acceptance Criteria
 - [x] Competency questions catalog migrated and indexed
 - [ ] Evaluation rubrics defined for each research workflow
 - [ ] Quality metrics baseline established
 - [ ] End-to-end validation: CQ14 runs through new org structure
-- [ ] `graphiti-fastmcp` source migrated and curated into `biosciences-memory/src/`
-- [ ] `biosciences-memory` has `pyproject.toml` with hatchling + ruff + pytest markers
-- [ ] `uv run pytest -m unit` passes in `biosciences-memory`
+- [x] `graphiti-fastmcp` source migrated and curated into `biosciences-memory/src/` (2026-02-27 — 14 entity types, 9 MCP tools, 26 tests passing)
+- [x] `biosciences-memory` has `pyproject.toml` with hatchling + ruff + pytest markers
+- [x] `uv run pytest -m unit` passes in `biosciences-memory`
 - [ ] Memory layer validates end-to-end: deepagents PERSIST phase writes to Docker Neo4j
 - [ ] CQ14 Temporal workflow persists research output to knowledge graph
 
