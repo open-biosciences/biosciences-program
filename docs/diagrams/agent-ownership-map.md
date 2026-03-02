@@ -1,7 +1,7 @@
 # Agent Ownership Map
 
-> Maps each of the 9 agents in the Open Biosciences platform to the repositories they own
-> and their primary responsibilities. Color-coded by migration wave.
+> Maps each of the 9 agents in the Open Biosciences platform to the 12 repos + knowledge-work-plugins
+> they own and their primary responsibilities. Color-coded by migration wave.
 
 ```mermaid
 flowchart LR
@@ -28,6 +28,7 @@ flowchart LR
         r_eval["biosciences-evaluation"]
         r_skills["biosciences-skills"]
         r_platskills["platform-skills"]
+        r_kwp["knowledge-work-plugins"]
         r_edu["biosciences-education"]
         r_ws["biosciences-workspace-template"]
     end
@@ -43,6 +44,7 @@ flowchart LR
     a8 --> r_eval
     a8 --> r_skills
     a8 --> r_platskills
+    a8 --> r_kwp
     a9 --> r_edu
     a9 --> r_ws
 
@@ -66,6 +68,7 @@ flowchart LR
     style r_eval fill:#fff3cd,stroke:#f59e0b,color:#1e1e1e
     style r_skills fill:#d4edda,stroke:#22c55e,color:#1e1e1e
     style r_platskills fill:#d4edda,stroke:#22c55e,color:#1e1e1e
+    style r_kwp fill:#f0f0f0,stroke:#666666,color:#1e1e1e
     style r_edu fill:#fff3cd,stroke:#f59e0b,color:#1e1e1e
     style r_ws fill:#fff3cd,stroke:#f59e0b,color:#1e1e1e
 ```
@@ -81,7 +84,7 @@ flowchart LR
 | 5 | Deep Agents Engineer | biosciences-deepagents | LangGraph supervisor + 7 specialist subagents, React UI |
 | 6 | Research Workflows | biosciences-research | Competency questions catalog, graph-builder workflows |
 | 7 | Temporal Engineer | biosciences-temporal | PydanticAI + Temporal.io durable workflows |
-| 8 | Quality & Skills | biosciences-evaluation, biosciences-skills, platform-skills | Evaluation rubrics, 6 domain skills, scaffold commands |
+| 8 | Quality & Skills | biosciences-evaluation, biosciences-skills, platform-skills, knowledge-work-plugins | Evaluation rubrics, 6 domain skills, scaffold commands, bio-research plugin |
 | 9 | Education & Workspace | biosciences-education, biosciences-workspace-template | Training materials, tutorials, bootstrap scripts |
 
 ## Decision Authority

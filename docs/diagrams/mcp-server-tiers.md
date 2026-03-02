@@ -9,7 +9,7 @@ implements the Fuzzy-to-Fact protocol (ADR-001) with `search_*` (fuzzy) and `get
 flowchart TD
     subgraph T0["Tier 0 -- Drug Discovery Core"]
         style T0 fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
-        ChEMBL["<b>ChEMBL</b><br/>3 tools<br/><i>CHEMBL25</i>"]
+        ChEMBL["<b>ChEMBL</b><br/>3 tools<br/><i>CHEMBL:25</i>"]
         OT["<b>Open Targets</b><br/>3 tools<br/><i>ENSG00000115170</i>"]
     end
 
@@ -18,13 +18,13 @@ flowchart TD
         HGNC["<b>HGNC</b><br/>2 tools<br/><i>HGNC:171</i>"]
         UniProt["<b>UniProt</b><br/>2 tools<br/><i>Q04771</i>"]
         Ensembl["<b>Ensembl</b><br/>3 tools<br/><i>ENSG00000115170</i>"]
-        Entrez["<b>Entrez / NCBI</b><br/>3 tools<br/><i>90</i>"]
+        Entrez["<b>Entrez / NCBI</b><br/>3 tools<br/><i>NCBIGene:90</i>"]
     end
 
     subgraph T2["Tier 2 -- Pharmacology"]
         style T2 fill:#dbeafe,stroke:#4a9eed,stroke-width:2px
-        PubChem["<b>PubChem</b><br/>2 tools<br/><i>CID 5280453</i>"]
-        IUPHAR["<b>IUPHAR / GtoPdb</b><br/>4 tools<br/><i>Target ID 1810</i>"]
+        PubChem["<b>PubChem</b><br/>2 tools<br/><i>PubChem:CID5280453</i>"]
+        IUPHAR["<b>IUPHAR / GtoPdb</b><br/>4 tools<br/><i>IUPHAR:1810</i>"]
     end
 
     subgraph T3["Tier 3 -- Pathways & Clinical Trials"]
@@ -35,7 +35,7 @@ flowchart TD
 
     subgraph T4["Tier 4 -- Interaction Networks"]
         style T4 fill:#ccfbf1,stroke:#06b6d4,stroke-width:2px
-        STRING["<b>STRING</b><br/>3 tools<br/><i>9606.ENSP00000263640</i>"]
+        STRING["<b>STRING</b><br/>3 tools<br/><i>STRING:9606.ENSP00000263640</i>"]
         BioGRID["<b>BioGRID</b><br/>2 tools<br/><i>107149</i>"]
     end
 
@@ -69,17 +69,17 @@ flowchart TD
 
 | Tier | Server | Tools | Fuzzy Input | Strict CURIE Format | Key Data |
 |------|--------|-------|-------------|---------------------|----------|
-| 0 | ChEMBL | `search_compounds`, `get_compound`, `get_compounds_batch` | Drug/compound name | `CHEMBL25` | Drug compounds, assays, mechanisms |
+| 0 | ChEMBL | `search_compounds`, `get_compound`, `get_compounds_batch` | Drug/compound name | `CHEMBL:25` | Drug compounds, assays, mechanisms |
 | 0 | Open Targets | `search_targets`, `get_target`, `get_associations` | Gene/disease name | `ENSG00000115170` | Disease-target associations, clinical evidence |
 | 1 | HGNC | `search_genes`, `get_gene` | Gene symbol/name | `HGNC:171` | Official gene nomenclature, cross-references |
 | 1 | UniProt | `search_proteins`, `get_protein` | Protein name/gene | `Q04771` | Protein sequences, function, structure |
 | 1 | Ensembl | `search_genes`, `get_gene`, `get_transcript` | Gene symbol | `ENSG00000115170` | Genomic coordinates, transcripts, variants |
-| 1 | Entrez | `search_genes`, `get_gene`, `get_pubmed_links` | Gene symbol/keyword | `90` (NCBI Gene ID) | Gene records, literature links |
-| 2 | PubChem | `search_compounds`, `get_compound` | Compound name/SMILES | `CID 5280453` | Chemical structures, bioactivity |
-| 2 | IUPHAR/GtoPdb | `search_ligands`, `get_ligand`, `search_targets`, `get_target` | Drug/receptor name | Target ID `1810` | Pharmacological targets, ligand binding |
+| 1 | Entrez | `search_genes`, `get_gene`, `get_pubmed_links` | Gene symbol/keyword | `NCBIGene:90` | Gene records, literature links |
+| 2 | PubChem | `search_compounds`, `get_compound` | Compound name/SMILES | `PubChem:CID5280453` | Chemical structures, bioactivity |
+| 2 | IUPHAR/GtoPdb | `search_ligands`, `get_ligand`, `search_targets`, `get_target` | Drug/receptor name | `IUPHAR:1810` | Pharmacological targets, ligand binding |
 | 3 | WikiPathways | `search_pathways`, `get_pathway`, `get_pathways_for_gene`, `get_pathway_components` | Pathway/gene name | `WP4806` | Biological pathways, gene members |
 | 3 | ClinicalTrials.gov | `search_trials`, `get_trial`, `get_trial_locations` | Condition/drug/NCT ID | `NCT03312634` | Clinical studies, enrollment, outcomes |
-| 4 | STRING | `search_proteins`, `get_interactions`, `get_network_image_url` | Protein/gene name | `9606.ENSP00000263640` | Protein-protein interactions, confidence scores |
+| 4 | STRING | `search_proteins`, `get_interactions`, `get_network_image_url` | Protein/gene name | `STRING:9606.ENSP00000263640` | Protein-protein interactions, confidence scores |
 | 4 | BioGRID | `search_genes`, `get_interactions` | Gene symbol | `107149` | Genetic and physical interactions |
 
 ## Cross-Reference Flow

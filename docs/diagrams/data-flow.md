@@ -4,6 +4,8 @@
 > from natural language input to validated knowledge graph output. This is the core data pattern
 > defined in ADR-001 Section 3.
 
+> **See also:** [research-workflow-sequence.md](research-workflow-sequence.md) for a detailed 7-phase sequence through all specialist subagents (uses ACVR1/FOP example).
+
 ```mermaid
 sequenceDiagram
     participant R as Researcher

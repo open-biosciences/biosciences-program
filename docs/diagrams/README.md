@@ -5,7 +5,7 @@
 Three layers of visual communication, each designed to stand alone:
 
 1. **Ecosystem Positioning** — Where Open Biosciences fits in the life sciences landscape
-2. **Platform Architecture** — How the 12 repos, 9 agents, and dependencies connect
+2. **Platform Architecture** — How the 12 repos + knowledge-work-plugins, 9 agents, and dependencies connect
 3. **Research Workflows** — What questions you can answer and how data flows
 
 ---
@@ -28,9 +28,12 @@ For contributors — understanding repo structure, agent ownership, and data flo
 | Artifact | Format | Description |
 |----------|--------|-------------|
 | [platform-architecture.excalidraw](platform-architecture.excalidraw) | Excalidraw | Four horizontal swim lanes (Foundation → Platform → Orchestration → Validation) with 12 repos as boxes, agent assignments, and dependency arrows between layers. Color-coded by wave. |
-| [repo-dependency-graph.md](repo-dependency-graph.md) | Mermaid | Directed graph of all 12 repos showing schema dependencies, MCP tool consumption, and graph persistence edges. Wave-colored subgraphs with dependency rules table. |
-| [agent-ownership-map.md](agent-ownership-map.md) | Mermaid | Left-to-right map connecting 9 agents to their 12 repos with responsibility summaries and decision authority matrix. |
+| [repo-dependency-graph.md](repo-dependency-graph.md) | Mermaid | Directed graph of all 12 repos + knowledge-work-plugins showing schema dependencies, MCP tool consumption, and graph persistence edges. Wave-colored subgraphs with dependency rules table. |
+| [agent-ownership-map.md](agent-ownership-map.md) | Mermaid | Left-to-right map connecting 9 agents to their 12 repos + knowledge-work-plugins with responsibility summaries and decision authority matrix. |
 | [data-flow.md](data-flow.md) | Mermaid | Sequence diagram of the Fuzzy-to-Fact protocol: natural language → fuzzy search → CURIE resolution → strict lookup → orchestration phases (ANCHOR through PERSIST) → knowledge graph. Uses BRCA1 drug-target example. |
+| [speckit-sdlc-workflow.md](speckit-sdlc-workflow.md) | Mermaid | 7-step SpecKit SDLC from ADR-003: constitution → specify → clarify → plan → tasks → analyze → implement. Four phase subgraphs (Governance, Specification, Planning, Implementation) with artifact outputs and commands table. |
+| [gateway-architecture.md](gateway-architecture.md) | Mermaid | FastMCP Cloud unified gateway: 3 clients → BIOSCIENCES_API_KEY → gateway → 12 MCP servers (10 public + 2 keyed). Two-tier auth model table and client configuration example. |
+| [graphiti-topology.md](graphiti-topology.md) | Mermaid | Dual-environment Neo4j topology: Docker (priming + working namespaces) and Aura (write-frozen). MCP connection matrix, namespace policy, and write-freeze policy. |
 
 ---
 
@@ -63,6 +66,7 @@ All diagrams use a consistent wave-based color palette:
 | Orchestration (Wave 3) | `#d0bfff` / `#e8d5ff` | `#8b5cf6` | deepagents, temporal |
 | Validation (Wave 4) | `#ffd8a8` / `#fff3cd` | `#f59e0b` | evaluation, research, education, workspace-template |
 | Knowledge Graph | `#c3fae8` | `#06b6d4` | Graphiti, Neo4j persistence |
+| External/Partner | `#f0f0f0` / `#e0e0e0` | `#666666` | knowledge-work-plugins (Anthropic repo) |
 
 ## Accuracy
 

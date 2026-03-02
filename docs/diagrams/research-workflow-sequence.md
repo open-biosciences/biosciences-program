@@ -5,6 +5,8 @@ transforms a natural language question into a verified knowledge graph. This
 example traces the ACVR1/FOP (fibrodysplasia ossificans progressiva) drug
 discovery scenario through all 7 specialist subagents.
 
+> **See also:** [data-flow.md](data-flow.md) for an abstract 4-participant overview of the same protocol (uses BRCA1 example).
+
 ```mermaid
 sequenceDiagram
     actor R as Researcher
