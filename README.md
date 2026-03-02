@@ -4,7 +4,7 @@
 
 Open Biosciences is an open-source platform for accelerating drug discovery and biomedical research by connecting AI agents to the world's authoritative life-sciences databases. Researchers ask questions in natural language. The platform resolves them to canonical identifiers, validates every claim against primary sources, and returns traceable knowledge graphs — not hallucinated summaries.
 
-→ Architecture and governance: [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture)
+→ Governance decisions (ADRs, specs, SpecKit): [biosciences-program](https://github.com/open-biosciences/biosciences-program) | Repository Analyzer Framework: [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture)
 
 ---
 
@@ -14,7 +14,7 @@ Life sciences researchers spend 60–80% of their time on data wrangling: queryi
 
 The platform enforces a **Fuzzy-to-Fact protocol**: every entity is first searched in natural language, then resolved to a canonical identifier (a CURIE), then validated against the authoritative database. No claim leaves the system unverified.
 
-→ Technical specification: [ADR-001 v1.4](https://github.com/open-biosciences/biosciences-architecture)
+→ Technical specification: [ADR-001 v1.4](https://github.com/open-biosciences/biosciences-program)
 
 ---
 
@@ -28,7 +28,7 @@ This platform evolved through three distinct implementations before becoming a p
 
 **Chapter 3 — Production (Temporal Workflows):** PydanticAI agents wired to Temporal.io activities brought durable execution: workflows survive crashes, retry failed API calls, and run batch pipelines at scale. The same 12-database MCP backbone underlies all three implementations.
 
-**The org migration** is the moment all three converge. `lifesciences-research` became `biosciences-mcp` (the API layer) and `biosciences-architecture` (the governance). The agents became `biosciences-deepagents` and `biosciences-temporal`. The skills became `biosciences-skills`. A private experiment became a public platform.
+**The org migration** is the moment all three converge. `lifesciences-research` became `biosciences-mcp` (the API layer) and `biosciences-program` (the governance). The agents became `biosciences-deepagents` and `biosciences-temporal`. The skills became `biosciences-skills`. A private experiment became a public platform.
 
 → Migration progress: [migration-tracker.md](migration-tracker.md)
 
@@ -40,8 +40,8 @@ Thirteen repositories under the [open-biosciences](https://github.com/open-biosc
 
 | Repository | Role | Wave |
 |------------|------|------|
-| [biosciences-program](https://github.com/open-biosciences/biosciences-program) | Migration tracking, agent team definitions | ✅ Wave 1 |
-| [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) | ADRs, schemas, SpecKit governance — root dependency | ✅ Wave 1 |
+| [biosciences-program](https://github.com/open-biosciences/biosciences-program) | ADRs, specs, SpecKit governance, migration tracking, agent team definitions | ✅ Wave 1 |
+| [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) | Repository Analyzer Framework | ✅ Wave 1 |
 | [biosciences-skills](https://github.com/open-biosciences/biosciences-skills) | 6 domain skills, Graphiti commands | ✅ Wave 1 |
 | [platform-skills](https://github.com/open-biosciences/platform-skills) | Scaffold commands, security review (platform skills) | ✅ Wave 1 |
 | [biosciences-mcp](https://github.com/open-biosciences/biosciences-mcp) | 12 FastMCP servers, 697+ tests, unified gateway | ✅ Wave 2 |
@@ -49,10 +49,10 @@ Thirteen repositories under the [open-biosciences](https://github.com/open-biosc
 | [biosciences-deepagents](https://github.com/open-biosciences/biosciences-deepagents) | LangGraph supervisor + 7 specialists, React UI | ✅ Wave 3 |
 | [biosciences-temporal](https://github.com/open-biosciences/biosciences-temporal) | PydanticAI agents, Temporal.io durable workflows | ✅ Wave 3 |
 | [biosciences-evaluation](https://github.com/open-biosciences/biosciences-evaluation) | Evaluation rubrics, quality metrics | ⬜ Wave 4 |
-| [biosciences-research](https://github.com/open-biosciences/biosciences-research) | Competency questions, graph-builder workflows | ⬜ Wave 4 |
+| [biosciences-research](https://github.com/open-biosciences/biosciences-research) | Competency questions, graph-builder workflows | 🟡 Wave 4 |
 | [biosciences-education](https://github.com/open-biosciences/biosciences-education) | Training materials, tutorials, onboarding | ⬜ Wave 4 |
 | [biosciences-workspace-template](https://github.com/open-biosciences/biosciences-workspace-template) | Bootstrap scripts, workspace config templates | ⬜ Wave 4 |
-| [marketplace](https://github.com/open-biosciences/marketplace) | Plugin marketplace (15 plugins in `.claude-plugin/` format) | ✅ |
+| [knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) | Cowork plugin collection (bio-research plugin wraps biosciences-mcp) | ✅ |
 
 → Full agent team definitions: [AGENTS.md](AGENTS.md)
 
@@ -67,7 +67,7 @@ Eleven active repositories organized into four migration waves, plus four legacy
 │
 ├── 🏛️ FOUNDATION  (Wave 1 ✅ complete)
 │   📋 program          coordination, migration tracking, agent team
-│   🏗️ architecture     ADRs, schemas, SpecKit governance — root provider
+│   🏗️ architecture     Repository Analyzer Framework
 │   ⚡ skills           6 domain skills, Graphiti commands
 │   🔧 platform-skills  scaffold commands, security review
 │
@@ -79,7 +79,7 @@ Eleven active repositories organized into four migration waves, plus four legacy
 │   🤖 deepagents       LangGraph supervisor · 7 specialists · React UI
 │   ⏱️ temporal         PydanticAI agents · Temporal.io durable workflows
 │
-├── 🔬 VALIDATION & EDUCATION  (Wave 4 ⬜ not started)
+├── 🔬 VALIDATION & EDUCATION  (Wave 4 🟡 in progress)
 │   🔬 research         competency questions · graph-builder workflows
 │   📊 evaluation       quality metrics · evaluation rubrics
 │   📚 education        tutorials · onboarding guides
@@ -105,16 +105,16 @@ The platform is built around concrete research questions: *"What are the synthet
 
 ## Get Involved
 
-The platform is MIT-licensed and structured for external contribution. The [marketplace](https://github.com/open-biosciences/marketplace) packages all MCP servers, skills, and commands into installable plugins. Here are three entry points depending on your background:
+The platform is MIT-licensed and structured for external contribution. The [knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins) collection includes a bio-research plugin that wraps the biosciences-mcp 34-tool gateway. Here are three entry points depending on your background:
 
 **Researcher** — Start with the competency questions catalog in [biosciences-research](https://github.com/open-biosciences/biosciences-research). Each scenario documents the research question, the databases queried, and re-run instructions. You can run any scenario today against the live MCP layer.
 
 **Developer** — The MCP layer is the most accessible contribution surface. Each server is an independent FastMCP wrapper for a public API. If you work with a database not yet covered (KEGG, OMIM, Orphanet), the scaffold commands in [platform-skills](https://github.com/open-biosciences/platform-skills) generate a compliant server skeleton from a spec. Adding a new MCP server is a self-contained, well-scoped contribution.
 
-**AI/LLM Builder** — The Fuzzy-to-Fact protocol (ADR-001) and SpecKit SDLC (ADR-003) are reusable patterns, not just biosciences artifacts. The architecture documents in [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture) explain the design decisions. The 9-agent team topology is a template for how to structure AI-assisted development of complex platforms.
+**AI/LLM Builder** — The Fuzzy-to-Fact protocol (ADR-001) and SpecKit SDLC (ADR-003) are reusable patterns, not just biosciences artifacts. The architecture documents in [biosciences-program](https://github.com/open-biosciences/biosciences-program) explain the design decisions. The 9-agent team topology is a template for how to structure AI-assisted development of complex platforms.
 
 → Scaffold commands: [platform-skills](https://github.com/open-biosciences/platform-skills)
-→ Architecture ADRs: [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture)
+→ Architecture ADRs: [biosciences-program](https://github.com/open-biosciences/biosciences-program)
 
 ---
 
@@ -124,7 +124,7 @@ This platform wraps 20+ years of bioinformatics API work. STRING, STITCH, NCATS 
 
 The novel contributions are methodological: the Fuzzy-to-Fact protocol, the SpecKit specification-driven SDLC, the Agentic Biolink schema (a unified JSON envelope across 12 heterogeneous APIs), and the 9-agent team topology for AI-assisted platform development.
 
-→ Prior art and research context: [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture)
+→ Prior art and research context: [biosciences-program](https://github.com/open-biosciences/biosciences-program)
 
 ---
 

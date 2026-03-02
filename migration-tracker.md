@@ -156,7 +156,7 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 ## Wave 4: Validation
 
-> **Note:** SpecKit process documents (specs/, .specify/, speckit-*.md) were originally scoped to biosciences-research (Wave 4). They have been reassigned to biosciences-architecture (Wave 1-ext) because they are architectural governance artifacts owned by the Platform Architect, not research outputs.
+> **Note:** SpecKit process documents (specs/, .specify/, speckit-*.md) were originally scoped to biosciences-research (Wave 4). They have been reassigned to biosciences-program (Wave 1-ext) because they are governance artifacts, not research outputs.
 
 **Status:** 🟡 In Progress (2026-02-27)
 **Target Repos:** `biosciences-evaluation`, `biosciences-research`, `biosciences-memory`
