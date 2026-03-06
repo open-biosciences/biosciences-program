@@ -4,6 +4,8 @@
 
 Open Biosciences is an open-source platform for accelerating drug discovery and biomedical research by connecting AI agents to the world's authoritative life-sciences databases. Researchers ask questions in natural language. The platform resolves them to canonical identifiers, validates every claim against primary sources, and returns traceable knowledge graphs — not hallucinated summaries.
 
+![ecosystem map](./docs/diagrams/ecosystem-map.png)
+
 → Governance decisions (ADRs, specs, SpecKit): [biosciences-program](https://github.com/open-biosciences/biosciences-program) | Repository Analyzer Framework: [biosciences-architecture](https://github.com/open-biosciences/biosciences-architecture)
 
 ---
