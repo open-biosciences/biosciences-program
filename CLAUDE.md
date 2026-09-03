@@ -15,14 +15,11 @@ Program management and cross-repo coordination for the Open Biosciences platform
 |------|---------|
 | `AGENTS.md` | Agent team definitions (9 agents, repo ownership, responsibilities) |
 | `migration-tracker.md` | Migration wave status from predecessor repos |
-| `docs/adr/accepted/` | 6 ADRs (001-006) — canonical governance decisions |
-| `specs/` | 13 MCP server SpecKit specifications (143 files) |
-| `.specify/` | SpecKit framework config (constitution, templates, scripts) |
-| `.claude/commands/speckit.*.md` | 9 SpecKit SDLC commands (ADR-003 governance) |
+| `docs/adr/README.md` | ADR **placement rule** and index. Platform ADRs (001–006, 007 proposed) live in `biosciences-mcp/docs/adr/`; project ADRs live in the repo they govern (e.g. `ADR-MEM-001` in `biosciences-memory`); program-scoped ADRs would live here as `ADR-PRG-*` when one is needed |
 
-## SpecKit Commands
+## SpecKit and ADRs
 
-The 9 SpecKit commands live in `.claude/commands/` in this repo. They are governance artifacts owned by the Program Director, available in any Claude Code session opened here or at the workspace root.
+The 13 server specs, `.specify/` config, and the SpecKit commands moved with the platform ADRs to `biosciences-mcp` on 2026-03-03 (program `83d6c67`, mcp `5278c4e`); the earlier consolidation into this repo (2026-02-27) is superseded. This repo holds no SpecKit tooling. `psychology-mcp` runs the current upstream Spec Kit layout (`.claude/skills/speckit-*`, hyphen invocation); `biosciences-mcp` is still on the January 2026 dotted-command layout.
 
 ## Responsibilities
 
