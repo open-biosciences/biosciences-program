@@ -23,26 +23,26 @@ Migration of predecessor repos (`lifesciences-research`, `lifesciences-deepagent
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
-| ADR-001 v1.4 (Agentic-First Architecture) | `docs/adr/accepted/adr-001-v1.4.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
-| ADR-002 v1.0 (Project Skills) | `docs/adr/accepted/adr-002-v1.0.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
-| ADR-003 v1.0 (SpecKit SDLC) | `docs/adr/accepted/adr-003-v1.0.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
-| ADR-004 v1.0 (FastMCP Lifecycle) | `docs/adr/accepted/adr-004-v1.0.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
-| ADR-005 v1.0 (Git Worktrees) | `docs/adr/accepted/adr-005-v1.0.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
-| ADR-006 v1.0 (Single Writer) | `docs/adr/accepted/adr-006-v1.0.md` | biosciences-architecture | `docs/adr/accepted/` | ✅ Complete |
-| Platform Engineering Rationale | `docs/platform-engineering-rationale.md` | biosciences-architecture | `docs/` | ✅ Complete |
+| ADR-001 v1.4 (Agentic-First Architecture) | `docs/adr/accepted/adr-001-v1.4.md` | biosciences-mcp (via architecture → program, final 2026-03-03) | `docs/adr/accepted/` | ✅ Complete |
+| ADR-002 v1.0 (Project Skills) | `docs/adr/accepted/adr-002-v1.0.md` | biosciences-mcp | `docs/adr/accepted/` | ✅ Complete |
+| ADR-003 v1.0 (SpecKit SDLC) | `docs/adr/accepted/adr-003-v1.0.md` | biosciences-mcp | `docs/adr/accepted/` | ✅ Complete |
+| ADR-004 v1.0 (FastMCP Lifecycle) | `docs/adr/accepted/adr-004-v1.0.md` | biosciences-mcp | `docs/adr/accepted/` | ✅ Complete |
+| ADR-005 v1.0 (Git Worktrees) | `docs/adr/accepted/adr-005-v1.0.md` | biosciences-mcp | `docs/adr/accepted/` | ✅ Complete |
+| ADR-006 v1.0 (Single Writer) | `docs/adr/accepted/adr-006-v1.0.md` | biosciences-mcp | `docs/adr/accepted/` | ✅ Complete |
+| Platform Engineering Rationale | `docs/platform-engineering-rationale.md` | biosciences-mcp | `docs/` | ✅ Complete |
 | 6 Domain Skills | `.claude/skills/lifesciences-*` | biosciences-skills | `.claude/skills/` | ✅ Complete |
-| 9 SpecKit Commands | `.claude/commands/speckit.*` | biosciences-program | `.claude/commands/` | ✅ Complete |
+| 9 SpecKit Commands | `.claude/commands/speckit.*` | biosciences-mcp | `.claude/commands/` | ✅ Complete (legacy layout; see AGE-689) |
 | Scaffold Skills | `.claude/commands/scaffold-*` | platform-skills | `.claude/commands/` | ✅ Complete |
 | Graphiti Skills | `.claude/commands/graphiti-*` | `~/.claude/skills/` (global) | Global install | ✅ Complete |
 | Security Review Skill | `.claude/skills/security-review/` | platform-skills | `.claude/skills/security-review/` | ✅ Complete |
-| specs/ (13 MCP server specs) | `lifesciences-research/specs/` | biosciences-program | `specs/` | ✅ Complete |
-| .specify/ (SpecKit config) | `lifesciences-research/.specify/` | biosciences-program | `.specify/` | ✅ Complete |
-| speckit-standard-prompt-v2.md | `lifesciences-research/docs/` | biosciences-program | `docs/` | ✅ Complete |
-| speckit-standard-prompt.md (v1 legacy) | `lifesciences-research/docs/` | biosciences-program | `docs/` | ✅ Complete |
-| speckit-scaffold-process-timeline-v2.md | `lifesciences-research/docs/` | biosciences-program | `docs/` | ✅ Complete |
+| specs/ (13 MCP server specs) | `lifesciences-research/specs/` | biosciences-mcp | `specs/` | ✅ Complete |
+| .specify/ (SpecKit config) | `lifesciences-research/.specify/` | biosciences-mcp | `.specify/` | ✅ Complete |
+| speckit-standard-prompt-v2.md | `lifesciences-research/docs/` | biosciences-mcp | `docs/` | ✅ Complete |
+| speckit-standard-prompt.md (v1 legacy) | `lifesciences-research/docs/` | biosciences-mcp | `docs/` | ✅ Complete |
+| speckit-scaffold-process-timeline-v2.md | `lifesciences-research/docs/` | biosciences-mcp | `docs/` | ✅ Complete |
 
 ### Acceptance Criteria
-- [x] All 6 ADRs present in `biosciences-architecture/docs/adr/accepted/`
+- [x] All 6 ADRs present in `biosciences-mcp/docs/adr/accepted/` (final location per `docs/adr/README.md` placement rule, 2026-09-02; earlier rows said biosciences-architecture, then biosciences-program)
 - [x] All 6 domain skills present in `biosciences-skills/.claude/skills/`
 - [x] All SpecKit commands present in `biosciences-program/.claude/commands/`
 - [x] Platform engineering rationale doc migrated
@@ -157,6 +157,8 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 ## Wave 4: Validation
 
 > **Note:** SpecKit process documents (specs/, .specify/, speckit-*.md) were originally scoped to biosciences-research (Wave 4). They have been reassigned to biosciences-program (Wave 1-ext) because they are governance artifacts, not research outputs.
+>
+> **Update 2026-09-02:** they moved again on 2026-03-03 to `biosciences-mcp` together with the ADRs (program `83d6c67`, mcp `5278c4e`); see `docs/adr/README.md` for the placement rule.
 
 **Status:** 🟡 In Progress (2026-02-27)
 **Target Repos:** `biosciences-evaluation`, `biosciences-research`, `biosciences-memory`

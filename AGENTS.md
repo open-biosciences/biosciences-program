@@ -22,10 +22,10 @@ The Program Director is the single point of accountability for migration progres
 
 | Field | Value |
 |-------|-------|
-| **Primary Repo** | `biosciences-architecture` |
+| **Primary Repo** | `biosciences-mcp` (ADRs, specs, `.specify/`); `biosciences-architecture` (Repository Analyzer Framework, workspace snapshots) |
 | **Role** | ADR governance, schema stewardship, Fuzzy-to-Fact protocol enforcement |
 | **Responsibilities** | ADR authorship and review, cross-reference schema evolution, API tier classification, Agentic Biolink schema governance |
-| **Key Artifacts** | ADRs (001–006+), cross-reference key registry, error code registry |
+| **Key Artifacts** | Platform ADRs (001–006, 007 proposed) in `biosciences-mcp/docs/adr/`, cross-reference key registry, error code registry; placement rule in `biosciences-program/docs/adr/README.md` |
 | **Interfaces With** | All agents (architectural authority) |
 
 The Platform Architect owns the normative specifications. No schema change ships without an ADR update. The Fuzzy-to-Fact protocol (ADR-001 §3) and SpecKit workflow (ADR-003) are under their governance.
