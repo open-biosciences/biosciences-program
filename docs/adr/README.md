@@ -8,17 +8,18 @@ ADRs are placed by **scope**, at the repository closest to where the decision is
 
 | Scope | Lives in | Numbering | Binds |
 |---|---|---|---|
-| **Platform** — a decision every MCP connector must follow | `biosciences-mcp/docs/adr/accepted/` | `ADR-NNN` (001…) | `biosciences-mcp`, `biosciences-mcp-edge`, `psychology-mcp`, and any future connector repo, except where a repo records a scoped deviation (see below) |
+| **Platform** — a decision every MCP connector must follow | `biosciences-mcp/docs/adr/accepted/` | `ADR-NNN` (001…) | `biosciences-mcp`, `biosciences-mcp-edge`, the org's private literature connector, and any future connector repo, except where a repo records a scoped deviation (see below) |
 | **Project** — a decision that binds one repo | that repo's `docs/adr/` | prefixed series, e.g. `ADR-MEM-NNN` | that repo only |
 | **Program** — cross-repo process, ownership, release, migration | `biosciences-program/docs/adr/` | `ADR-PRG-NNN` when the first one is needed | all repos in the org |
 | **Shared non-functional** across programs | a separate shared repo | later | not warranted yet |
 
 Rules that follow from the table:
 
-1. **Consumers inherit by reference.** A repo that follows the platform ADRs links to them (as `psychology-mcp/docs/adr/README.md` does); it does not copy them. `biosciences-mcp-edge` copies the §8 envelope models because it has no cross-repo import, which is a code dependency choice, not a governance one.
-2. **Deviations are recorded where they apply.** A repo that departs from a platform ADR by design keeps a `docs/adr/README.md` naming the ADR, the clause, and the reason. `psychology-mcp` records five literature adaptations this way. `biosciences-mcp-edge` departs from ADR-001 §3 (Fuzzy-to-Fact) by design — its tools are post-graph detailed retrievals keyed by an identifier the caller already resolved, and deterministic wrappers for retrievals that skills performed non-deterministically — and should record that in the same form (tracked in AGE-689).
+1. **Consumers inherit by reference.** A repo that follows the platform ADRs links to them from its own `docs/adr/README.md`; it does not copy them. `biosciences-mcp-edge` copies the §8 envelope models because it has no cross-repo import, which is a code dependency choice, not a governance one.
+2. **Deviations are recorded where they apply.** A repo that departs from a platform ADR by design keeps a `docs/adr/README.md` naming the ADR, the clause, and the reason. The literature connector records its adaptations this way. `biosciences-mcp-edge` departs from ADR-001 §3 (Fuzzy-to-Fact) by design — its tools are post-graph detailed retrievals keyed by an identifier the caller already resolved, and deterministic wrappers for retrievals that skills performed non-deterministically — and should record that in the same form (tracked in AGE-689).
 3. **Numbers are assigned once.** Platform numbers are taken in order in `biosciences-mcp`; a project series uses its own prefix so it can never collide. Drafts in reference repositories (`lifesciences-research`, `lifesciences-mcp`) do not reserve platform numbers.
-4. **The Platform Architect authors platform ADRs in `biosciences-mcp`.** `biosciences-architecture` holds the Repository Analyzer Framework and workspace architecture snapshots, not governance artifacts.
+4. **Visibility.** Public org repositories MUST NOT link to file paths or URLs in private org repositories; refer to a private repo by role and carry any needed measurement or text in the public document. Private repositories may link to public ones. (AGE-696.)
+5. **The Platform Architect authors platform ADRs in `biosciences-mcp`.** `biosciences-architecture` holds the Repository Analyzer Framework and workspace architecture snapshots, not governance artifacts.
 
 ## Where things are
 

@@ -19,7 +19,7 @@ Program management and cross-repo coordination for the Open Biosciences platform
 
 ## SpecKit and ADRs
 
-The 13 server specs, `.specify/` config, and the SpecKit commands moved with the platform ADRs to `biosciences-mcp` on 2026-03-03 (program `83d6c67`, mcp `5278c4e`); the earlier consolidation into this repo (2026-02-27) is superseded. This repo holds no SpecKit tooling. `psychology-mcp` runs the current upstream Spec Kit layout (`.claude/skills/speckit-*`, hyphen invocation); `biosciences-mcp` is still on the January 2026 dotted-command layout.
+The 13 server specs, `.specify/` config, and the SpecKit commands moved with the platform ADRs to `biosciences-mcp` on 2026-03-03 (program `83d6c67`, mcp `5278c4e`); the earlier consolidation into this repo (2026-02-27) is superseded. This repo holds no SpecKit tooling. `biosciences-mcp` is still on the January 2026 dotted-command Spec Kit layout; the current upstream skills layout (`.claude/skills/speckit-*`, hyphen invocation, `converge`) is already in use elsewhere in the org and is the upgrade target.
 
 ## Responsibilities
 
