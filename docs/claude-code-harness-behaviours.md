@@ -100,7 +100,30 @@ guard fire? Unknown. The same question applies to `pr-review-guard.py`.
 
 ## Q3 — What is the harness behaviour inside a worktree session?
 
-**Status: ANSWERED EMPIRICALLY at claude 2.1.270, 2026-09-13. Not a documented contract.**
+**Status: PARTLY ANSWERED — and the measurement was taken in a configuration upstream tells you not to use. See the correction below before relying on it.**
+
+> **Correction, 2026-09-13 (later).** A scout of official documentation
+> (`docs/official-claude-code-git-ci-practices.md`) found that this question is *partly documented*,
+> and that the measurement below answered a different case than the one that matters.
+>
+> Upstream defines `${CLAUDE_PROJECT_DIR}` as **"the project root where the session started"**, and
+> states that it **stays put** when Claude *enters* a worktree during a session — only `cwd`
+> follows. The measurement below **launched a session inside the worktree**, which upstream
+> troubleshooting names as the fault condition (*"you launched Claude Code from inside the worktree.
+> Launch from the main checkout instead."*). So it measured the launch root, exactly as defined —
+> it did not discover worktree-aware resolution.
+>
+> **Do not generalise it to "the variable resolves to the worktree."** For a correctly-launched
+> session it resolves to the main checkout.
+>
+> The documented answer to the underlying need is explicit: *"`${CLAUDE_PROJECT_DIR}` stays put…
+> `cwd` follows Claude… Read it when a hook needs the worktree path."* A hook should read `cwd`
+> from its stdin payload. The `git rev-parse --git-dir` vs `--git-common-dir` detector recorded
+> below works, but is an invention where a prescribed answer already exists.
+>
+> Also corrected: "the worktree gets its own settings" is **half right**. A worktree loads the
+> checked-out copy of the repo root's `.claude/settings.json`, but `settings.local.json`, saved
+> permission approvals and project-scope plugins are **shared with the main checkout**.
 
 ### Measured
 
