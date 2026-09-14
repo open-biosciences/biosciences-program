@@ -13,6 +13,8 @@ They share a shape: **each is cheaply testable and nobody has run the test.** Ea
 an open question through at least one adversarial review, one research pass, and one PR
 closure. That is the cost of leaving an empirical question in prose.
 
+> **Update, 2026-09-13.** Q3 is now answered empirically — see below. Q1 and Q2 remain open.
+>
 > **Correction, 2026-09-12.** The closing comment on PR #14 claimed two of the three were
 > answered by `docs/plans/2026-09-12-three-planes-claude-code-agents.md`. That was wrong.
 > **None of the three are answered.** That document establishes *subagent* mechanics in
@@ -96,9 +98,81 @@ guard fire? Unknown. The same question applies to `pr-review-guard.py`.
 
 ---
 
-## Q3 — What is the harness behaviour inside an `EnterWorktree` session?
+## Q3 — What is the harness behaviour inside a worktree session?
 
-**Status: OPEN.**
+**Status: PARTLY ANSWERED — and the measurement was taken in a configuration upstream tells you not to use. See the correction below before relying on it.**
+
+> **Correction, 2026-09-13 (later).** A scout of official documentation
+> (`docs/official-claude-code-git-ci-practices.md`) found that this question is *partly documented*,
+> and that the measurement below answered a different case than the one that matters.
+>
+> Upstream defines `${CLAUDE_PROJECT_DIR}` as **"the project root where the session started"**, and
+> states that it **stays put** when Claude *enters* a worktree during a session — only `cwd`
+> follows. The measurement below **launched a session inside the worktree**, which upstream
+> troubleshooting names as the fault condition (*"you launched Claude Code from inside the worktree.
+> Launch from the main checkout instead."*). So it measured the launch root, exactly as defined —
+> it did not discover worktree-aware resolution.
+>
+> **Do not generalise it to "the variable resolves to the worktree."** For a correctly-launched
+> session it resolves to the main checkout.
+>
+> The documented answer to the underlying need is explicit: *"`${CLAUDE_PROJECT_DIR}` stays put…
+> `cwd` follows Claude… Read it when a hook needs the worktree path."* A hook should read `cwd`
+> from its stdin payload. The `git rev-parse --git-dir` vs `--git-common-dir` detector recorded
+> below works, but is an invention where a prescribed answer already exists.
+>
+> Also corrected: "the worktree gets its own settings" is **half right**. A worktree loads the
+> checked-out copy of the repo root's `.claude/settings.json`, but `settings.local.json`, saved
+> permission approvals and project-scope plugins are **shared with the main checkout**.
+
+### Measured
+
+Probe hook invoked by absolute path (so it fired regardless of the variable), registered via
+`--settings` from a scratchpad, session started with cwd = a worktree. No repo file or config
+touched.
+
+```
+CLAUDE_PROJECT_DIR = …/biosciences-mcp/.worktrees/curie-hook
+PWD                = …/biosciences-mcp/.worktrees/curie-hook
+$CLAUDE_PROJECT_DIR/.claude/hooks/validate-curie.py exists?  YES
+```
+
+**`$CLAUDE_PROJECT_DIR` resolves to the worktree, not the common root.**
+
+From the same payload, `transcript_path` landed under a project namespace keyed to the worktree
+path — `…-biosciences-mcp--worktrees-curie-hook` — distinct from the root's. **Claude Code treats
+a worktree as its own project**, so a worktree session loads the worktree's own
+`.claude/settings.json`. A branch that modifies a hook therefore tests its own version of it.
+
+Also measured: **`$CLAUDE_PROJECT_DIR` is unset in ordinary Bash tool environments.** It exists
+only during hook execution and cannot be read by an agent orienting itself mid-task.
+
+### What remains open
+
+The worktree's own `settings.json` hook was **not observed firing** — its matcher (`.*_get_.*`)
+had no triggerable tool in that environment, and triggering it would have required editing repo
+config or a live API key. The conclusion rests on the namespace assignment plus the variable
+resolution, not on a fired hook. The one-call test: a session started in the worktree makes any
+`mcp__biosciences-mcp__*_get_*` call with a deliberately invalid CURIE; a `deny` carrying the
+`validate-curie:` prefix confirms it.
+
+### Why this does not close the design question
+
+This is an observation at one version, not a guarantee. If upstream changes project-root
+derivation, every hook depending on it changes behaviour silently. **The durable answer is that
+hooks should self-locate** — the `PreToolUse` stdin payload carries `cwd`, and
+
+```sh
+[ "$(git rev-parse --git-dir)" != "$(git rev-parse --git-common-dir)" ]   # true in a worktree
+git rev-parse --show-toplevel                                            # correct root in both
+```
+
+detects a worktree with no harness facility at all. Recorded as a decision in ADR-PRG-001 §2.4.
+A self-locating hook is also testable outside Claude Code, which the org's current hooks are not.
+
+### Superseded prior text
+
+
 
 ### What is established
 
