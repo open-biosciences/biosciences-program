@@ -160,7 +160,7 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 >
 > **Update 2026-09-02:** they moved again on 2026-03-03 to `biosciences-mcp` together with the ADRs (program `83d6c67`, mcp `5278c4e`); see `docs/adr/README.md` for the placement rule.
 
-**Status:** 🟡 In Progress (2026-02-27; re-verified 2026-10-02, see "Status check 2026-10-02" below)
+**Status:** 🟡 In Progress (2026-02-27; re-verified 2026-10-03, see "Status check 2026-10-03" below)
 **Target Repos:** `biosciences-evaluation`, `biosciences-research`, `biosciences-memory`
 **Source:** `lifesciences-research` docs/ + `graphiti-fastmcp`
 **Depends On:** Wave 2 + Wave 3 (graphiti-fastmcp usage patterns confirmed through orchestration layer)
@@ -171,10 +171,10 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 | Item | Source Path | Target Repo | Target Path | Status |
 |------|------------|-------------|-------------|--------|
-| Competency questions catalog | `docs/competency-questions/` | biosciences-research | `docs/competency-questions/` | ⚠️ Migrated in `3ce399e` (72 files), removed from `main` 2026-02-28 (`da1c81f` archived, `014fef5` deleted). Only `docs/competency-questions-catalog.md` and `-paul.md` remain |
-| Research outputs | `docs/research/` + `docs/research-reports/` | biosciences-research | `docs/research/` + `docs/research-reports/` | ⚠️ Migrated in `13c64b0` (8 + 4 files), removed from `main` by `014fef5` |
-| Evaluation docs | `docs/evaluation/` | biosciences-research | `docs/evaluation/` | ⚠️ Migrated (11 files), removed from `main` by `014fef5` |
-| Research scenarios | `docs/scenarios/` | biosciences-research | `docs/scenarios/` | ⚠️ Migrated (11 files), removed from `main` by `014fef5` |
+| Competency questions catalog | `docs/competency-questions/` | biosciences-research | `docs/competency-questions/` | ✅ Complete. Migrated in `3ce399e`; the 15 CQs are now published as the Hugging Face dataset [open-biosciences/biosciences-competency-questions-sample](https://huggingface.co/datasets/open-biosciences/biosciences-competency-questions-sample). `docs/competency-questions-catalog.md` remains in biosciences-research; the validation write-ups remain in the [predecessor repo](https://github.com/donbr/lifesciences-research/tree/main/docs/competency-questions) |
+| Research outputs | `docs/research/` + `docs/research-reports/` | biosciences-research | `docs/research/` + `docs/research-reports/` | ✅ Superseded. Migrated in `13c64b0`, removed in the 2026-02-28 refactor (`014fef5`); originals remain in the predecessor repo ([research](https://github.com/donbr/lifesciences-research/tree/main/docs/research), [research-reports](https://github.com/donbr/lifesciences-research/tree/main/docs/research-reports)) |
+| Evaluation docs | `docs/evaluation/` | biosciences-research | `docs/evaluation/` | ✅ Superseded. Removed in the 2026-02-28 refactor (`014fef5`); originals remain in the [predecessor repo](https://github.com/donbr/lifesciences-research/tree/main/docs/evaluation) |
+| Research scenarios | `docs/scenarios/` | biosciences-research | `docs/scenarios/` | ✅ Superseded. Removed in the 2026-02-28 refactor (`014fef5`); originals remain in the [predecessor repo](https://github.com/donbr/lifesciences-research/tree/main/docs/scenarios) |
 | Evaluation rubrics | (new) | biosciences-evaluation | `rubrics/` | ⬜ Not Started |
 | Quality metrics definitions | (new) | biosciences-evaluation | `metrics/` | ⬜ Not Started |
 | Reference materials | `reference/` | biosciences-research | `reference/` | ⬜ N/A (no reference/ dir in source) |
@@ -202,7 +202,7 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 - ~~Add biosciences-specific entity schemas (Gene, Protein, Drug, Disease, Pathway)~~
 
 ### Acceptance Criteria
-- [ ] Competency questions catalog migrated and indexed — was done (`3ce399e`), but the catalog's validations and index were removed from `biosciences-research` `main` on 2026-02-28; home to be decided (see below)
+- [x] Competency questions catalog migrated and indexed (`3ce399e`; published as the Hugging Face dataset [open-biosciences/biosciences-competency-questions-sample](https://huggingface.co/datasets/open-biosciences/biosciences-competency-questions-sample))
 - [ ] Evaluation rubrics defined for each research workflow
 - [ ] Quality metrics baseline established
 - [ ] End-to-end validation: CQ14 runs through new org structure
@@ -214,14 +214,13 @@ Four lint errors resolved beyond the pure rename (tracked on AGE-160 and AGE-161
 
 ---
 
-### Status check 2026-10-02
+### Status check 2026-10-03
 
-Verified against the target repositories, not against this file's earlier state.
+Verified against the target repositories and Hugging Face.
 
-- **`biosciences-research` was repurposed.** On 2026-02-28, `da1c81f` ("cq docs") moved the migrated docs to `docs/archive/` and `014fef5` ("pre-refactor") deleted the archive. The repo is now a RAG/LangGraph project (51 tracked files). The migrated content survives only in git history, at `3ce399e` and `13c64b0`. **Open decision:** restore it to `biosciences-research`, move it to another repo, or record it as retired.
-- **`biosciences-evaluation`** holds README, CLAUDE.md and LICENSE only. Rubrics (AGE-179) and metrics (AGE-180) are not started.
-- **CQ14 end to end (AGE-181).** The tool gap is closed: AGE-226 delivered `biosciences-mcp-edge` and plugin PR #2 (merged 2026-03-03), and the bio-research plugin points at `https://biosciences-mcp-edge.fastmcp.app/mcp`. CQ14 run outputs exist from the bio-research plugin pipeline (`biosciences-workspace-template/output/cq14/.ob-cq/cq14/`). No run has yet been recorded through deepagents or Temporal persisting to Docker Neo4j, and those two criteria stay open.
-- **Not part of Wave 4:** spec 015 (FastMCP 3.4.7 upgrade, AGE-718) is tracked in `biosciences-mcp/specs/015-fastmcp-4-upgrade/`.
+- **Competency questions:** the 15 CQs are published as [open-biosciences/biosciences-competency-questions-sample](https://huggingface.co/datasets/open-biosciences/biosciences-competency-questions-sample) (structured JSONL with CURIEs, gold-standard paths and workflow steps), which the bio-research plugin skills read. A CQ14 validation run is published as [open-biosciences/biosciences-cq-validations](https://huggingface.co/datasets/open-biosciences/biosciences-cq-validations).
+- **Write-ups:** the validation, research, research-report, evaluation and scenario Markdown docs were removed from biosciences-research in the 2026-02-28 refactor (`da1c81f`, `014fef5`) and remain, unchanged, in the [predecessor repo](https://github.com/donbr/lifesciences-research/tree/main/docs).
+- **Still open:** evaluation rubrics (AGE-179) and the quality-metrics baseline (AGE-180) in `biosciences-evaluation`; a CQ14 run through deepagents and Temporal that persists to Docker Neo4j (AGE-181).
 
 ## Migration Rules
 
